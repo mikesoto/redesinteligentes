@@ -76,7 +76,7 @@
           function showSideCounts(){ 
             global $leftCount;
             global $rightCount;
-            echo '<label class="label label-primary">Izquierdo: '.$leftCount. '</label> | <label class="label label-success">Derecho: '.$rightCount.'</label>';
+            echo '<label class="label label-primary">Izquierdo</label> | <label class="label label-success">Derecho</label>';
           }
 
           function makeRedLabel($arr,$lv_usr,$side){
