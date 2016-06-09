@@ -239,7 +239,7 @@ $(document).ready(function() {
 
 	$("#map-scrollbutton").click(function(){
 		var w = document.getElementById("red-map-wrap").scrollWidth;
-		var h = (parseInt(w)/2.65);
+		var h = (parseInt(w)/2.48);
     $("#arbol").scrollLeft(h);
   });
 
@@ -265,7 +265,7 @@ $(document).ready(function() {
   	var nz = parseFloat(z) + 0.1;
   	console.log('current zoom '+z);
   	console.log('new zoom '+nz);
-  	if(nz < 1.3){
+  	if(nz < 1.9){
 	  	$("#arbol").css('zoom',nz);
 	  	$("#arbol").css('-moz-transform',nz);
 	  	//center the map

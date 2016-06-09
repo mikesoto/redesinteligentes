@@ -97,7 +97,7 @@ tr.red-user-right{
 }
 
 .red-map-wrap{
-	width:410%;
+	width:510%;
 	margin:0px 0px 40px;
 }
 
@@ -107,8 +107,13 @@ tr.red-user-right{
 
 .red-box {
 	display:inline-block;
-	margin:5px;
-	font-size:12px;
+	margin:1px;
+	font-size:10px;
+}
+
+.red-box .label-default{
+	padding:1px;
+	margin:1px;
 }
 
 .red-box section.downlines-container{
