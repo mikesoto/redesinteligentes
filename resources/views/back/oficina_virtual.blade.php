@@ -109,7 +109,7 @@
 
         <!-- Tab panes -->
         <div class="tab-content">
-          <div id="red-map-controls" class="hidden">
+          <div id="red-map-controls" class="text-right hidden">
             <button id="map-zoomout" class="btn btn-sm btn-warning"> - </button>
             <button id="map-scrollbutton" class="btn btn-sm btn-primary">>|<</button>
             <button id="map-zoomin" class="btn btn-sm btn-warning"> + </button>

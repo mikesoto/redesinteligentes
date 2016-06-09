@@ -239,7 +239,7 @@ $(document).ready(function() {
 
 	$("#map-scrollbutton").click(function(){
 		var w = document.getElementById("red-map-wrap").scrollWidth;
-		var h = (parseInt(w)/2.48);
+		var h = (parseInt(w)/2.22);
     $("#arbol").scrollLeft(h);
   });
 
