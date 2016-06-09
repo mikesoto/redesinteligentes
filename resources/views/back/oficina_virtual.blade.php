@@ -71,6 +71,14 @@
 
 
         <?php 
+          $leftCount = 0;
+          $rightCount = 0;
+          function showSideCounts(){ 
+            global $leftCount;
+            global $rightCount;
+            echo '<label class="label label-primary">Izquierdo: '.$leftCount. '</label> | <label class="label label-success">Derecho: '.$rightCount.'</label>';
+          }
+
           function makeRedLabel($arr,$lv_usr,$side){
             $assigned = false;
             if($lv_usr){
@@ -92,13 +100,21 @@
 
           function makeUserSection($usr,$tree,$lvl){
               if( isset($tree[$lvl]) ){
+                global $leftCount;
+                global $rightCount;
                 echo '<section class="downlines-container">
                         <article class="red-box">';
                           $usr2 = makeRedLabel($tree[$lvl],$usr,'left');
+                          if($usr2 != 0){
+                            $leftCount++;
+                          }
                           makeUserSection($usr2,$tree,$lvl+1);
                 echo '  </article>
                         <article class="red-box">';
                           $usr3 = makeRedLabel($tree[$lvl],$usr,'right');
+                          if($usr3 != 0){
+                            $rightCount++;
+                          }
                           makeUserSection($usr3,$tree,$lvl+1);
                 echo '  </article>
                       </section>';
@@ -120,11 +136,11 @@
                 <label class="label label-warning red-socio">{{ $cur_user->user }}</label>
                 <?php makeUserSection($cur_user->id,$tree,0);?>
               </article>
-
-
             </div>
           </div><!-- /tabpane arbol-->
-
+          <div class="side-counts">
+              <?php showSideCounts(); ?>
+          </div>
           <div role="tabpanel" class="tab-pane" id="lados">
             <div class="panel panel-info">
               <div class="panel-body">
