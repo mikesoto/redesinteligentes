@@ -1,0 +1,133 @@
+.navbar-header .navbar-brand img{
+	height:50px;
+	width:auto;
+	margin-top:-10px;
+	margin-right:100px;
+}
+
+.main-navbar{
+	height:80px;
+	padding:10px;
+}
+
+.left.carousel-control,.right.carousel-control{
+	opacity:0.1;
+	-webkit-transition: opacity 1s; /* Safari */
+  transition: opacity 1s;
+}
+
+.left.carousel-control:hover,.right.carousel-control:hover{
+	opacity:0.8;
+}
+
+.main-content{
+	margin-top:100px;
+	padding-top:10px;
+	padding-bottom:20px;
+	min-height:500px;
+}
+
+.modules-container{
+	margin-top:20px;
+	margin-bottom:20px;
+}
+
+.module-text{
+	padding-top:10px;
+}
+
+#logout-btn{
+	margin-right:15px;
+}
+
+.loading-container{
+	padding-top:30px;
+	font-size:18px;
+	color:#ffc72d;
+	text-align:center;
+}
+
+.alert-sm{
+	font-size:12px;
+	padding:5px;
+}
+
+.alert ul{
+	list-style: none;
+	padding:0;
+}
+
+.table td{
+	text-align:left;
+}
+
+tr.red-user-left{
+	border-left:3px solid #337AB7;
+}
+
+tr.red-user-right{
+	border-left:3px solid #449D44;
+}
+
+.ghost{
+	color:#ccc;
+}
+
+#register-user-modal .modal-content .modal-body .row{
+	margin:20px 0px;
+}
+
+.com-periodo-label{
+	padding:0;
+	margin-top:-10px;
+}
+
+.nav-tabs{
+	border-bottom:none;
+}
+
+
+
+/* =====================================================================
+============================= RED MAP ==================================
+========================================================================*/
+#arbol{
+	overflow:auto;
+	min-height:150px;
+}
+
+.red-map-wrap{
+	width:410%;
+	margin:0px 0px 40px;
+}
+
+#map-scrollbutton{
+	margin:10px auto;
+}
+
+.red-box {
+	display:inline-block;
+	margin:5px;
+	font-size:12px;
+}
+
+.red-box section.downlines-container{
+	border-top:thin solid #ccc;
+	margin-top:3px;
+	background-color:rgba(0,0,0,0.05);
+}
+
+
+
+footer{
+	padding-top:20px;
+	padding-bottom:40px;
+}
+
+/* Portrait */
+/*@media screen and (max-width: 360px){
+	.navbar-header .navbar-brand img{
+		margin-top:-60px;
+		height:60px;
+	}
+}*/
