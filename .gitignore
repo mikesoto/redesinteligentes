@@ -1,6 +1,7 @@
 /vendor
 /node_modules
 /public/storage
+public/error_log
 Homestead.yaml
 Homestead.json
 .env
