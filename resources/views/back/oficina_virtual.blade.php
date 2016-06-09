@@ -76,14 +76,14 @@
             if($lv_usr){
               foreach($arr as $socio){
                 if($socio->upline == $lv_usr && $socio->side == $side){
-                  echo '<label class="label label-primary">'.$socio->user.' ('.$socio->upline.') - '.$socio->side.'</label>';
+                  echo '<label class="label label-primary">'.$socio->user.'</label>';
                   $assigned = true;
                   return $socio->id;
                 }
               }
             }
             if(!$assigned){
-              echo '<label class="label label-default">...</label>';
+              echo '<label class="label label-default">--</label>';
               return 0;
             }
           }
@@ -113,57 +113,57 @@
                             <section class="downlines-container">
                               <article class="red-box">
                                 <?php $usr15 = makeRedLabel($tree[3],$usr7,'left');?>
-                                <!-- <section class="downlines-container">
+                                <section class="downlines-container">
                                   <article class="red-box">
-                                    <label class="label label-primary">fds24</label>
-                                    <section class="downlines-container">
+                                    <?php $usr31 = makeRedLabel($tree[4],$usr15,'left');?>
+                                    <!-- <section class="downlines-container">
                                       <article class="red-box">
                                         <label class="label label-primary">fds44</label>
                                       </article>
                                       <article class="red-box">
                                         <label class="label label-primary">fds45</label>
                                       </article>
-                                    </section>
+                                    </section> -->
                                   </article>
                                   <article class="red-box">
-                                    <label class="label label-primary">fds25</label>
-                                    <section class="downlines-container">
+                                    <?php $usr32 = makeRedLabel($tree[4],$usr15,'right');?>
+                                    <!-- <section class="downlines-container">
                                       <article class="red-box">
                                         <label class="label label-primary">fds46</label>
                                       </article>
                                       <article class="red-box">
                                         <label class="label label-primary">fds47</label>
                                       </article>
-                                    </section>
+                                    </section> -->
                                   </article>
-                                </section> -->
+                                </section>
                               </article>
                               <article class="red-box">
                                 <?php $usr16 = makeRedLabel($tree[3],$usr7,'right');?>
-                                <!-- <section class="downlines-container">
+                                <section class="downlines-container">
                                   <article class="red-box">
-                                    <label class="label label-primary">fds26</label>
-                                    <section class="downlines-container">
+                                    <?php $usr33 = makeRedLabel($tree[4],$usr16,'left');?>
+                                    <!-- <section class="downlines-container">
                                       <article class="red-box">
                                         <label class="label label-primary">fds48</label>
                                       </article>
                                       <article class="red-box">
                                         <label class="label label-primary">fds49</label>
                                       </article>
-                                    </section>
+                                    </section> -->
                                   </article>
                                   <article class="red-box">
-                                    <label class="label label-primary">fds27</label>
-                                    <section class="downlines-container">
+                                    <?php $usr34 = makeRedLabel($tree[4],$usr16,'right');?>
+                                    <!-- <section class="downlines-container">
                                       <article class="red-box">
                                         <label class="label label-primary">fds50</label>
                                       </article>
                                       <article class="red-box">
                                         <label class="label label-primary">fds51</label>
                                       </article>
-                                    </section>
+                                    </section> -->
                                   </article>
-                                </section> -->
+                                </section>
                               </article>
                             </section>
                           </article>
@@ -172,57 +172,57 @@
                             <section class="downlines-container">
                               <article class="red-box">
                                 <?php $usr17 = makeRedLabel($tree[3],$usr8,'left');?>
-                                <!-- <section class="downlines-container">
+                                <section class="downlines-container">
                                   <article class="red-box">
-                                    <label class="label label-primary">fds28</label>
-                                    <section class="downlines-container">
+                                    <?php $usr35 = makeRedLabel($tree[4],$usr17,'left');?>
+                                    <!-- <section class="downlines-container">
                                       <article class="red-box">
                                         <label class="label label-primary">fds52</label>
                                       </article>
                                       <article class="red-box">
                                         <label class="label label-primary">fds53</label>
                                       </article>
-                                    </section>
+                                    </section> -->
                                   </article>
                                   <article class="red-box">
-                                    <label class="label label-default">...</label>
-                                    <section class="downlines-container">
+                                    <?php $usr36 = makeRedLabel($tree[4],$usr17,'right');?>
+                                    <!-- <section class="downlines-container">
                                       <article class="red-box">
                                         <label class="label label-default">...</label>
                                       </article>
                                       <article class="red-box">
                                         <label class="label label-default">...</label>
                                       </article>
-                                    </section>
+                                    </section> -->
                                   </article>
-                                </section> -->
+                                </section>
                               </article>
                               <article class="red-box">
                                 <?php $usr18 = makeRedLabel($tree[3],$usr8,'right');?>
-                                <!-- <section class="downlines-container">
+                                <section class="downlines-container">
                                   <article class="red-box">
-                                    <label class="label label-primary">fds29</label>
-                                    <section class="downlines-container">
+                                    <?php $usr37 = makeRedLabel($tree[4],$usr18,'left');?>
+                                    <!-- <section class="downlines-container">
                                       <article class="red-box">
                                         <label class="label label-primary">fds54</label>
                                       </article>
                                       <article class="red-box">
                                         <label class="label label-primary">fds55</label>
                                       </article>
-                                    </section>
+                                    </section> -->
                                   </article>
                                   <article class="red-box">
-                                    <label class="label label-primary">fds30</label>
-                                    <section class="downlines-container">
+                                    <?php $usr38 = makeRedLabel($tree[4],$usr18,'right');?>
+                                    <!-- <section class="downlines-container">
                                       <article class="red-box">
                                         <label class="label label-primary">fds56</label>
                                       </article>
                                       <article class="red-box">
                                         <label class="label label-primary">fds57</label>
                                       </article>
-                                    </section>
+                                    </section> -->
                                   </article>
-                                </section> -->
+                                </section>
                               </article>
                             </section>
                           </article>
@@ -236,57 +236,57 @@
                             <section class="downlines-container">
                               <article class="red-box">
                                 <?php $usr19 = makeRedLabel($tree[3],$usr9,'left');?>
-                                <!-- <section class="downlines-container">
+                                <section class="downlines-container">
                                   <article class="red-box">
-                                    <label class="label label-primary">fds31</label>
-                                    <section class="downlines-container">
+                                    <?php $usr39 = makeRedLabel($tree[4],$usr19,'left');?>
+                                    <!-- <section class="downlines-container">
                                       <article class="red-box">
                                         <label class="label label-primary">fds58</label>
                                       </article>
                                       <article class="red-box">
                                         <label class="label label-primary">fds59</label>
                                       </article>
-                                    </section>
+                                    </section> -->
                                   </article>
                                   <article class="red-box">
-                                    <label class="label label-default">...</label>
-                                    <section class="downlines-container">
+                                    <?php $usr40 = makeRedLabel($tree[4],$usr19,'right');?>
+                                    <!-- <section class="downlines-container">
                                       <article class="red-box">
                                         <label class="label label-primary">fds60</label>
                                       </article>
                                       <article class="red-box">
                                         <label class="label label-primary">fds61</label>
                                       </article>
-                                    </section>
+                                    </section> -->
                                   </article>
-                                </section> -->
+                                </section>
                               </article>
                               <article class="red-box">
                                 <?php $usr20 = makeRedLabel($tree[3],$usr9,'right');?>
-                                <!-- <section class="downlines-container">
+                                <section class="downlines-container">
                                   <article class="red-box">
-                                    <label class="label label-default">...</label>
-                                    <section class="downlines-container">
+                                    <?php $usr41 = makeRedLabel($tree[4],$usr20,'left');?>
+                                    <!-- <section class="downlines-container">
                                       <article class="red-box">
                                         <label class="label label-default">...</label>
                                       </article>
                                       <article class="red-box">
                                         <label class="label label-default">...</label>
                                       </article>
-                                    </section>
+                                    </section> -->
                                   </article>
                                   <article class="red-box">
-                                    <label class="label label-default">...</label>
-                                    <section class="downlines-container">
+                                    <?php $usr42 = makeRedLabel($tree[4],$usr20,'right');?>
+                                    <!-- <section class="downlines-container">
                                       <article class="red-box">
                                         <label class="label label-default">...</label>
                                       </article>
                                       <article class="red-box">
                                         <label class="label label-default">...</label>
                                       </article>
-                                    </section>
+                                    </section> -->
                                   </article>
-                                </section> -->
+                                </section>
                               </article>
                             </section>
                           </article>
@@ -295,57 +295,57 @@
                             <section class="downlines-container">
                               <article class="red-box">
                                 <?php $usr21 = makeRedLabel($tree[3],$usr10,'left');?>
-                                <!-- <section class="downlines-container">
+                                <section class="downlines-container">
                                   <article class="red-box">
-                                    <label class="label label-primary">fds32</label>
-                                    <section class="downlines-container">
+                                    <?php $usr43 = makeRedLabel($tree[4],$usr21,'left');?>
+                                    <!-- <section class="downlines-container">
                                       <article class="red-box">
                                         <label class="label label-primary">fds62</label>
                                       </article>
                                       <article class="red-box">
                                         <label class="label label-primary">fds63</label>
                                       </article>
-                                    </section>
+                                    </section> -->
                                   </article>
                                   <article class="red-box">
-                                    <label class="label label-primary">fds33</label>
-                                    <section class="downlines-container">
+                                    <?php $usr44 = makeRedLabel($tree[4],$usr21,'right');?>
+                                    <!-- <section class="downlines-container">
                                       <article class="red-box">
                                         <label class="label label-primary">fds64</label>
                                       </article>
                                       <article class="red-box">
                                         <label class="label label-primary">fds65</label>
                                       </article>
-                                    </section>
+                                    </section> -->
                                   </article>
-                                </section> -->
+                                </section>
                               </article>
                               <article class="red-box">
                                 <?php $usr22 = makeRedLabel($tree[3],$usr10,'right');?>
-                                <!-- <section class="downlines-container">
+                                <section class="downlines-container">
                                   <article class="red-box">
-                                    <label class="label label-primary">fds34</label>
-                                    <section class="downlines-container">
+                                    <?php $usr45 = makeRedLabel($tree[4],$usr22,'left');?>
+                                    <!-- <section class="downlines-container">
                                       <article class="red-box">
                                         <label class="label label-primary">fds66</label>
                                       </article>
                                       <article class="red-box">
                                         <label class="label label-primary">fds67</label>
                                       </article>
-                                    </section>
+                                    </section> -->
                                   </article>
                                   <article class="red-box">
-                                    <label class="label label-primary">fds35</label>
-                                    <section class="downlines-container">
+                                    <?php $usr46 = makeRedLabel($tree[4],$usr22,'right');?>
+                                    <!-- <section class="downlines-container">
                                       <article class="red-box">
                                         <label class="label label-primary">fds68</label>
                                       </article>
                                       <article class="red-box">
                                         <label class="label label-primary">fds69</label>
                                       </article>
-                                    </section>
+                                    </section> -->
                                   </article>
-                                </section> -->
+                                </section>
                               </article>
                             </section>
                           </article>
@@ -365,57 +365,57 @@
                             <section class="downlines-container">
                               <article class="red-box">
                                 <?php $usr23 = makeRedLabel($tree[3],$usr11,'left');?>
-                                <!-- <section class="downlines-container">
+                                <section class="downlines-container">
                                   <article class="red-box">
-                                    <label class="label label-primary">fds36</label>
-                                    <section class="downlines-container">
+                                    <?php $usr47 = makeRedLabel($tree[4],$usr23,'left');?>
+                                    <!-- <section class="downlines-container">
                                       <article class="red-box">
                                         <label class="label label-primary">fds70</label>
                                       </article>
                                       <article class="red-box">
                                         <label class="label label-primary">fds71</label>
                                       </article>
-                                    </section>
+                                    </section> -->
                                   </article>
                                   <article class="red-box">
-                                    <label class="label label-primary">fds37</label>
-                                    <section class="downlines-container">
+                                    <?php $usr48 = makeRedLabel($tree[4],$usr23,'right');?>
+                                    <!-- <section class="downlines-container">
                                       <article class="red-box">
                                         <label class="label label-primary">fds72</label>
                                       </article>
                                       <article class="red-box">
                                         <label class="label label-primary">fds73</label>
                                       </article>
-                                    </section>
+                                    </section> -->
                                   </article>
-                                </section> -->
+                                </section>
                               </article>
                               <article class="red-box">
                                 <?php $usr24 = makeRedLabel($tree[3],$usr11,'right');?>
-                                <!-- <section class="downlines-container">
+                                <section class="downlines-container">
                                   <article class="red-box">
-                                    <label class="label label-primary">fds38</label>
-                                    <section class="downlines-container">
+                                    <?php $usr49 = makeRedLabel($tree[4],$usr24,'left');?>
+                                    <!-- <section class="downlines-container">
                                       <article class="red-box">
                                         <label class="label label-primary">fds74</label>
                                       </article>
                                       <article class="red-box">
                                         <label class="label label-primary">fds75</label>
                                       </article>
-                                    </section>
+                                    </section> -->
                                   </article>
                                   <article class="red-box">
-                                    <label class="label label-primary">fds39</label>
-                                    <section class="downlines-container">
+                                    <?php $usr50 = makeRedLabel($tree[4],$usr24,'right');?>
+                                    <!-- <section class="downlines-container">
                                       <article class="red-box">
                                         <label class="label label-primary">fds76</label>
                                       </article>
                                       <article class="red-box">
                                         <label class="label label-primary">fds77</label>
                                       </article>
-                                    </section>
+                                    </section> -->
                                   </article>
-                                </section> -->
+                                </section>
                               </article>
                             </section>
                           </article>
@@ -424,57 +424,57 @@
                             <section class="downlines-container">
                               <article class="red-box">
                                 <?php $usr25 = makeRedLabel($tree[3],$usr12,'left');?>
-                                <!-- <section class="downlines-container">
+                                <section class="downlines-container">
                                   <article class="red-box">
-                                    <label class="label label-primary">fds40</label>
-                                    <section class="downlines-container">
+                                    <?php $usr51 = makeRedLabel($tree[4],$usr25,'left');?>
+                                    <!-- <section class="downlines-container">
                                       <article class="red-box">
                                         <label class="label label-primary">fds78</label>
                                       </article>
                                       <article class="red-box">
                                         <label class="label label-primary">fds79</label>
                                       </article>
-                                    </section>
+                                    </section> -->
                                   </article>
                                   <article class="red-box">
-                                    <label class="label label-primary">fds41</label>
-                                    <section class="downlines-container">
+                                    <?php $usr52 = makeRedLabel($tree[4],$usr25,'right');?>
+                                    <!-- <section class="downlines-container">
                                       <article class="red-box">
                                         <label class="label label-primary">fds80</label>
                                       </article>
                                       <article class="red-box">
                                         <label class="label label-primary">fds81</label>
                                       </article>
-                                    </section>
+                                    </section> -->
                                   </article>
-                                </section> -->
+                                </section>
                               </article>
                               <article class="red-box">
                                 <?php $usr26 = makeRedLabel($tree[3],$usr12,'right');?>
-                                <!-- <section class="downlines-container">
+                                <section class="downlines-container">
                                   <article class="red-box">
-                                    <label class="label label-primary">fds42</label>
-                                    <section class="downlines-container">
+                                    <?php $usr53 = makeRedLabel($tree[4],$usr26,'left');?>
+                                    <!-- <section class="downlines-container">
                                       <article class="red-box">
                                         <label class="label label-primary">fds82</label>
                                       </article>
                                       <article class="red-box">
                                         <label class="label label-primary">fds83</label>
                                       </article>
-                                    </section>
+                                    </section> -->
                                   </article>
                                   <article class="red-box">
-                                    <label class="label label-primary">fds43</label>
-                                    <section class="downlines-container">
+                                    <?php $usr54 = makeRedLabel($tree[4],$usr26,'right');?>
+                                    <!-- <section class="downlines-container">
                                       <article class="red-box">
                                         <label class="label label-primary">fds84</label>
                                       </article>
                                       <article class="red-box">
                                         <label class="label label-primary">fds85</label>
                                       </article>
-                                    </section>
+                                    </section> -->
                                   </article>
-                                </section> -->
+                                </section>
                               </article>
                             </section>
                           </article>
@@ -488,57 +488,57 @@
                             <section class="downlines-container">
                               <article class="red-box">
                                 <?php $usr27 = makeRedLabel($tree[3],$usr13,'left');?>
-                                <!-- <section class="downlines-container">
+                                <section class="downlines-container">
                                   <article class="red-box">
-                                    <label class="label label-default">...</label>
-                                    <section class="downlines-container">
+                                    <?php $usr55 = makeRedLabel($tree[4],$usr27,'left');?>
+                                    <!-- <section class="downlines-container">
                                       <article class="red-box">
                                         <label class="label label-default">...</label>
                                       </article>
                                       <article class="red-box">
                                         <label class="label label-default">...</label>
                                       </article>
-                                    </section>
+                                    </section> -->
                                   </article>
                                   <article class="red-box">
-                                    <label class="label label-default">...</label>
-                                    <section class="downlines-container">
+                                    <?php $usr56 = makeRedLabel($tree[4],$usr27,'right');?>
+                                    <!-- <section class="downlines-container">
                                       <article class="red-box">
                                         <label class="label label-default">...</label>
                                       </article>
                                       <article class="red-box">
                                         <label class="label label-default">...</label>
                                       </article>
-                                    </section>
+                                    </section> -->
                                   </article>
-                                </section> -->
+                                </section>
                               </article>
                               <article class="red-box">
                                 <?php $usr28 = makeRedLabel($tree[3],$usr13,'right');?>
-                                <!-- <section class="downlines-container">
+                                <section class="downlines-container">
                                   <article class="red-box">
-                                    <label class="label label-default">...</label>
-                                    <section class="downlines-container">
+                                    <?php $usr57 = makeRedLabel($tree[4],$usr28,'left');?>
+                                    <!-- <section class="downlines-container">
                                       <article class="red-box">
                                         <label class="label label-default">...</label>
                                       </article>
                                       <article class="red-box">
                                         <label class="label label-default">...</label>
                                       </article>
-                                    </section>
+                                    </section> -->
                                   </article>
                                   <article class="red-box">
-                                    <label class="label label-default">...</label>
-                                    <section class="downlines-container">
+                                    <?php $usr58 = makeRedLabel($tree[4],$usr28,'right');?>
+                                    <!-- <section class="downlines-container">
                                       <article class="red-box">
                                         <label class="label label-default">...</label>
                                       </article>
                                       <article class="red-box">
                                         <label class="label label-default">...</label>
                                       </article>
-                                    </section>
+                                    </section> -->
                                   </article>
-                                </section> -->
+                                </section>
                               </article>
                             </section>
                           </article>
@@ -547,57 +547,57 @@
                             <section class="downlines-container">
                               <article class="red-box">
                                 <?php $usr29 = makeRedLabel($tree[3],$usr14,'left');?>
-                                <!-- <section class="downlines-container">
+                                <section class="downlines-container">
                                   <article class="red-box">
-                                    <label class="label label-default">...</label>
-                                    <section class="downlines-container">
+                                    <?php $usr59 = makeRedLabel($tree[4],$usr29,'left');?>
+                                    <!-- <section class="downlines-container">
                                       <article class="red-box">
                                         <label class="label label-default">...</label>
                                       </article>
                                       <article class="red-box">
                                         <label class="label label-default">...</label>
                                       </article>
-                                    </section>
+                                    </section> -->
                                   </article>
                                   <article class="red-box">
-                                    <label class="label label-default">...</label>
-                                    <section class="downlines-container">
+                                    <?php $usr60 = makeRedLabel($tree[4],$usr29,'right');?>
+                                    <!-- <section class="downlines-container">
                                       <article class="red-box">
                                         <label class="label label-default">...</label>
                                       </article>
                                       <article class="red-box">
                                         <label class="label label-default">...</label>
                                       </article>
-                                    </section>
+                                    </section> -->
                                   </article>
-                                </section> -->
+                                </section>
                               </article>
                               <article class="red-box">
                                 <?php $usr30 = makeRedLabel($tree[3],$usr14,'right');?>
-                                <!-- <section class="downlines-container">
+                                <section class="downlines-container">
                                   <article class="red-box">
-                                    <label class="label label-default">...</label>
-                                    <section class="downlines-container">
+                                    <?php $usr61 = makeRedLabel($tree[4],$usr30,'left');?>
+                                    <!-- <section class="downlines-container">
                                       <article class="red-box">
                                         <label class="label label-default">...</label>
                                       </article>
                                       <article class="red-box">
                                         <label class="label label-default">...</label>
                                       </article>
-                                    </section>
+                                    </section> -->
                                   </article>
                                   <article class="red-box">
-                                    <label class="label label-default">...</label>
-                                    <section class="downlines-container">
+                                    <?php $usr62 = makeRedLabel($tree[4],$usr30,'right');?>
+                                    <!-- <section class="downlines-container">
                                       <article class="red-box">
                                         <label class="label label-default">...</label>
                                       </article>
                                       <article class="red-box">
                                         <label class="label label-default">...</label>
                                       </article>
-                                    </section>
+                                    </section> -->
                                   </article>
-                                </section> -->
+                                </section>
                               </article>
                             </section>
                           </article>
