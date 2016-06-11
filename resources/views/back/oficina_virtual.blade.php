@@ -70,12 +70,8 @@
         </ul>
 
 
-        <?php 
-          $leftCount = 0;
-          $rightCount = 0;
+        <?php
           function showSideCounts(){ 
-            global $leftCount;
-            global $rightCount;
             echo '<label class="label label-primary">Izquierdo</label> | <label class="label label-success">Derecho</label>';
           }
 
@@ -100,21 +96,13 @@
 
           function makeUserSection($usr,$tree,$lvl){
               if( isset($tree[$lvl]) ){
-                global $leftCount;
-                global $rightCount;
                 echo '<section class="downlines-container">
                         <article class="red-box">';
                           $usr2 = makeRedLabel($tree[$lvl],$usr,'left');
-                          if($usr2 != 0){
-                            $leftCount++;
-                          }
                           makeUserSection($usr2,$tree,$lvl+1);
                 echo '  </article>
                         <article class="red-box">';
                           $usr3 = makeRedLabel($tree[$lvl],$usr,'right');
-                          if($usr3 != 0){
-                            $rightCount++;
-                          }
                           makeUserSection($usr3,$tree,$lvl+1);
                 echo '  </article>
                       </section>';
@@ -127,9 +115,11 @@
         <div class="tab-content">
           <div id="red-map-controls" class="text-right hidden">
             <button id="map-zoomout" class="btn btn-sm btn-warning"> - </button>
-            <button id="map-scrollbutton" class="btn btn-sm btn-primary">>|<</button>
+            <button id="map-scrollbutton" class="btn btn-sm btn-primary">Centrar</button>
             <button id="map-zoomin" class="btn btn-sm btn-warning"> + </button>
           </div>
+
+          <!-- =============================== tabpane arbol ========================= -->
           <div id="arbol" class="tab-pane active" role="tabpanel">
             <div id="red-map-wrap" class="row text-center red-map-wrap">
               <article id="main-red-box" class="red-box">
@@ -138,9 +128,30 @@
               </article>
             </div>
           </div><!-- /tabpane arbol-->
-          <div class="side-counts">
-              <?php showSideCounts(); ?>
-          </div>
+          
+          <!-- =============================== tabpane lados ========================= -->
+          <?php 
+            function makeLadoRow($tree,$level,$upline,$side){
+              $found = false;
+              $pad = 8*($level+1);
+              foreach( $tree[$level] as $socio){
+                if($socio->side == $side && $socio->upline == $upline){
+                  echo '<tr class="red-item red-user-'.$side.'">
+                          <td style="padding-left: '.$pad.'px;">
+                            '. $socio->nombre .' '. $socio->apellido_paterno .' ('. $socio->user .')
+                          </td>
+                        </tr>';
+                  $found = true;
+                  return $socio->id;
+                }
+              }
+              if(!$found){
+                return false;
+              }
+            }
+          ?>
+
+
           <div role="tabpanel" class="tab-pane" id="lados">
             <div class="panel panel-info">
               <div class="panel-body">
@@ -152,16 +163,263 @@
                       </tr>
                     </thead>
                     <tbody>
-                      @foreach( $downlines as $downline)
-                        @if($downline->side == 'left')
-                          <tr id="dl-data-{{$downline->id}}" class="red-item red-user-{{$downline->side}}" data-user-id="{{ $downline->id }}" data-upline="{{ $downline->upline }}" data-status="closed" data-downlines="">
-                            <td>
-                                {{ $downline->nombre }} {{ $downline->apellido_paterno .' '. $downline->apellido_materno}} (ID:{{ $downline->id }})
-                                <span id="load-dl-{{$downline->id}}" class="pull-right hidden">...</span>
-                            </td>
-                          </tr>
-                        @endif
-                      @endforeach
+                      <?php 
+                        $soc0L = makeLadoRow($tree,0,$cur_user->id,'left');
+                          $soc1L = makeLadoRow($tree,1,$soc0L,'left');
+                            $soc2L = makeLadoRow($tree,2,$soc1L,'left');
+                              $soc3L = makeLadoRow($tree,3,$soc2L,'left');
+                                $soc4L = makeLadoRow($tree,4,$soc3L,'left');
+                                  $soc5L = makeLadoRow($tree,5,$soc4L,'left');
+                                    $soc6L = makeLadoRow($tree,5,$soc5L,'left');
+                                      $soc7L = makeLadoRow($tree,5,$soc6L,'left');
+                                      $soc7R = makeLadoRow($tree,5,$soc6L,'right');
+                                    $soc6R = makeLadoRow($tree,5,$soc5L,'right');
+                                      $soc7L = makeLadoRow($tree,5,$soc6R,'left');
+                                      $soc7R = makeLadoRow($tree,5,$soc6R,'right');
+                                  $soc5R = makeLadoRow($tree,5,$soc4L,'right');
+                                    $soc6L = makeLadoRow($tree,5,$soc5L,'left');
+                                      $soc7L = makeLadoRow($tree,5,$soc6L,'left');
+                                      $soc7R = makeLadoRow($tree,5,$soc6L,'right');
+                                    $soc6R = makeLadoRow($tree,5,$soc5R,'right');
+                                      $soc7L = makeLadoRow($tree,5,$soc6R,'left');
+                                      $soc7R = makeLadoRow($tree,5,$soc6R,'right');
+                                $soc4R = makeLadoRow($tree,4,$soc3L,'right');
+                                  $soc5L = makeLadoRow($tree,5,$soc4R,'left');
+                                    $soc6L = makeLadoRow($tree,5,$soc5L,'left');
+                                      $soc7L = makeLadoRow($tree,5,$soc6L,'left');
+                                      $soc7R = makeLadoRow($tree,5,$soc6L,'right');
+                                    $soc6R = makeLadoRow($tree,5,$soc5L,'right');
+                                      $soc7L = makeLadoRow($tree,5,$soc6R,'left');
+                                      $soc7R = makeLadoRow($tree,5,$soc6R,'right');
+                                  $soc5R = makeLadoRow($tree,5,$soc4R,'right');
+                                    $soc6L = makeLadoRow($tree,5,$soc5L,'left');
+                                      $soc7L = makeLadoRow($tree,5,$soc6L,'left');
+                                      $soc7R = makeLadoRow($tree,5,$soc6L,'right');
+                                    $soc6R = makeLadoRow($tree,5,$soc5R,'right');
+                                      $soc7L = makeLadoRow($tree,5,$soc6R,'left');
+                                      $soc7R = makeLadoRow($tree,5,$soc6R,'right');
+                              $soc3R = makeLadoRow($tree,3,$soc2L,'right');
+                                $soc4L = makeLadoRow($tree,4,$soc3R,'left');
+                                  $soc5L = makeLadoRow($tree,5,$soc4L,'left');
+                                    $soc6L = makeLadoRow($tree,5,$soc5L,'left');
+                                      $soc7L = makeLadoRow($tree,5,$soc6L,'left');
+                                      $soc7R = makeLadoRow($tree,5,$soc6L,'right');
+                                    $soc6R = makeLadoRow($tree,5,$soc5L,'right');
+                                      $soc7L = makeLadoRow($tree,5,$soc6R,'left');
+                                      $soc7R = makeLadoRow($tree,5,$soc6R,'right');
+                                  $soc5R = makeLadoRow($tree,5,$soc4L,'right');
+                                    $soc6L = makeLadoRow($tree,5,$soc5L,'left');
+                                      $soc7L = makeLadoRow($tree,5,$soc6L,'left');
+                                      $soc7R = makeLadoRow($tree,5,$soc6L,'right');
+                                    $soc6R = makeLadoRow($tree,5,$soc5R,'right');
+                                      $soc7L = makeLadoRow($tree,5,$soc6R,'left');
+                                      $soc7R = makeLadoRow($tree,5,$soc6R,'right');
+                                $soc4R = makeLadoRow($tree,4,$soc3R,'right');
+                                  $soc5L = makeLadoRow($tree,5,$soc4R,'left');
+                                    $soc6L = makeLadoRow($tree,5,$soc5L,'left');
+                                      $soc7L = makeLadoRow($tree,5,$soc6L,'left');
+                                      $soc7R = makeLadoRow($tree,5,$soc6L,'right');
+                                    $soc6R = makeLadoRow($tree,5,$soc5L,'right');
+                                      $soc7L = makeLadoRow($tree,5,$soc6R,'left');
+                                      $soc7R = makeLadoRow($tree,5,$soc6R,'right');
+                                  $soc5R = makeLadoRow($tree,5,$soc4R,'right');
+                                    $soc6L = makeLadoRow($tree,5,$soc5L,'left');
+                                      $soc7L = makeLadoRow($tree,5,$soc6L,'left');
+                                      $soc7R = makeLadoRow($tree,5,$soc6L,'right');
+                                    $soc6R = makeLadoRow($tree,5,$soc5R,'right');
+                                      $soc7L = makeLadoRow($tree,5,$soc6R,'left');
+                                      $soc7R = makeLadoRow($tree,5,$soc6R,'right');
+                            $soc2R = makeLadoRow($tree,2,$soc1L,'right');
+                              $soc3L = makeLadoRow($tree,3,$soc2R,'left');
+                                $soc4L = makeLadoRow($tree,4,$soc3L,'left');
+                                  $soc5L = makeLadoRow($tree,5,$soc4L,'left');
+                                    $soc6L = makeLadoRow($tree,5,$soc5L,'left');
+                                      $soc7L = makeLadoRow($tree,5,$soc6L,'left');
+                                      $soc7R = makeLadoRow($tree,5,$soc6L,'right');
+                                    $soc6R = makeLadoRow($tree,5,$soc5L,'right');
+                                      $soc7L = makeLadoRow($tree,5,$soc6R,'left');
+                                      $soc7R = makeLadoRow($tree,5,$soc6R,'right');
+                                  $soc5R = makeLadoRow($tree,5,$soc4L,'right');
+                                    $soc6L = makeLadoRow($tree,5,$soc5L,'left');
+                                      $soc7L = makeLadoRow($tree,5,$soc6L,'left');
+                                      $soc7R = makeLadoRow($tree,5,$soc6L,'right');
+                                    $soc6R = makeLadoRow($tree,5,$soc5R,'right');
+                                      $soc7L = makeLadoRow($tree,5,$soc6R,'left');
+                                      $soc7R = makeLadoRow($tree,5,$soc6R,'right');
+                                $soc4R = makeLadoRow($tree,4,$soc3L,'right');
+                                  $soc5L = makeLadoRow($tree,5,$soc4R,'left');
+                                    $soc6L = makeLadoRow($tree,5,$soc5L,'left');
+                                      $soc7L = makeLadoRow($tree,5,$soc6L,'left');
+                                      $soc7R = makeLadoRow($tree,5,$soc6L,'right');
+                                    $soc6R = makeLadoRow($tree,5,$soc5L,'right');
+                                      $soc7L = makeLadoRow($tree,5,$soc6R,'left');
+                                      $soc7R = makeLadoRow($tree,5,$soc6R,'right');
+                                  $soc5R = makeLadoRow($tree,5,$soc4R,'right');
+                                    $soc6L = makeLadoRow($tree,5,$soc5L,'left');
+                                      $soc7L = makeLadoRow($tree,5,$soc6L,'left');
+                                      $soc7R = makeLadoRow($tree,5,$soc6L,'right');
+                                    $soc6R = makeLadoRow($tree,5,$soc5R,'right');
+                                      $soc7L = makeLadoRow($tree,5,$soc6R,'left');
+                                      $soc7R = makeLadoRow($tree,5,$soc6R,'right');
+                              $soc3R = makeLadoRow($tree,3,$soc2R,'right');
+                                $soc4L = makeLadoRow($tree,4,$soc3R,'left');
+                                  $soc5L = makeLadoRow($tree,5,$soc4L,'left');
+                                    $soc6L = makeLadoRow($tree,5,$soc5L,'left');
+                                      $soc7L = makeLadoRow($tree,5,$soc6L,'left');
+                                      $soc7R = makeLadoRow($tree,5,$soc6L,'right');
+                                    $soc6R = makeLadoRow($tree,5,$soc5L,'right');
+                                      $soc7L = makeLadoRow($tree,5,$soc6R,'left');
+                                      $soc7R = makeLadoRow($tree,5,$soc6R,'right');
+                                  $soc5R = makeLadoRow($tree,5,$soc4L,'right');
+                                    $soc6L = makeLadoRow($tree,5,$soc5L,'left');
+                                      $soc7L = makeLadoRow($tree,5,$soc6L,'left');
+                                      $soc7R = makeLadoRow($tree,5,$soc6L,'right');
+                                    $soc6R = makeLadoRow($tree,5,$soc5R,'right');
+                                      $soc7L = makeLadoRow($tree,5,$soc6R,'left');
+                                      $soc7R = makeLadoRow($tree,5,$soc6R,'right');
+                                $soc4R = makeLadoRow($tree,4,$soc3R,'right');
+                                  $soc5L = makeLadoRow($tree,5,$soc4R,'left');
+                                    $soc6L = makeLadoRow($tree,5,$soc5L,'left');
+                                      $soc7L = makeLadoRow($tree,5,$soc6L,'left');
+                                      $soc7R = makeLadoRow($tree,5,$soc6L,'right');
+                                    $soc6R = makeLadoRow($tree,5,$soc5L,'right');
+                                      $soc7L = makeLadoRow($tree,5,$soc6R,'left');
+                                      $soc7R = makeLadoRow($tree,5,$soc6R,'right');
+                                  $soc5R = makeLadoRow($tree,5,$soc4R,'right');
+                                    $soc6L = makeLadoRow($tree,5,$soc5L,'left');
+                                      $soc7L = makeLadoRow($tree,5,$soc6L,'left');
+                                      $soc7R = makeLadoRow($tree,5,$soc6L,'right');
+                                    $soc6R = makeLadoRow($tree,5,$soc5R,'right');
+                                      $soc7L = makeLadoRow($tree,5,$soc6R,'left');
+                                      $soc7R = makeLadoRow($tree,5,$soc6R,'right');
+                          $soc1R = makeLadoRow($tree,1,$soc0L,'right');
+                            $soc2L = makeLadoRow($tree,2,$soc1R,'left');
+                              $soc3L = makeLadoRow($tree,3,$soc2L,'left');
+                                $soc4L = makeLadoRow($tree,4,$soc3L,'left');
+                                  $soc5L = makeLadoRow($tree,5,$soc4L,'left');
+                                    $soc6L = makeLadoRow($tree,5,$soc5L,'left');
+                                      $soc7L = makeLadoRow($tree,5,$soc6L,'left');
+                                      $soc7R = makeLadoRow($tree,5,$soc6L,'right');
+                                    $soc6R = makeLadoRow($tree,5,$soc5L,'right');
+                                      $soc7L = makeLadoRow($tree,5,$soc6R,'left');
+                                      $soc7R = makeLadoRow($tree,5,$soc6R,'right');
+                                  $soc5R = makeLadoRow($tree,5,$soc4L,'right');
+                                    $soc6L = makeLadoRow($tree,5,$soc5L,'left');
+                                      $soc7L = makeLadoRow($tree,5,$soc6L,'left');
+                                      $soc7R = makeLadoRow($tree,5,$soc6L,'right');
+                                    $soc6R = makeLadoRow($tree,5,$soc5R,'right');
+                                      $soc7L = makeLadoRow($tree,5,$soc6R,'left');
+                                      $soc7R = makeLadoRow($tree,5,$soc6R,'right');
+                                $soc4R = makeLadoRow($tree,4,$soc3L,'right');
+                                  $soc5L = makeLadoRow($tree,5,$soc4R,'left');
+                                    $soc6L = makeLadoRow($tree,5,$soc5L,'left');
+                                      $soc7L = makeLadoRow($tree,5,$soc6L,'left');
+                                      $soc7R = makeLadoRow($tree,5,$soc6L,'right');
+                                    $soc6R = makeLadoRow($tree,5,$soc5L,'right');
+                                      $soc7L = makeLadoRow($tree,5,$soc6R,'left');
+                                      $soc7R = makeLadoRow($tree,5,$soc6R,'right');
+                                  $soc5R = makeLadoRow($tree,5,$soc4R,'right');
+                                    $soc6L = makeLadoRow($tree,5,$soc5L,'left');
+                                      $soc7L = makeLadoRow($tree,5,$soc6L,'left');
+                                      $soc7R = makeLadoRow($tree,5,$soc6L,'right');
+                                    $soc6R = makeLadoRow($tree,5,$soc5R,'right');
+                                      $soc7L = makeLadoRow($tree,5,$soc6R,'left');
+                                      $soc7R = makeLadoRow($tree,5,$soc6R,'right');
+                              $soc3R = makeLadoRow($tree,3,$soc2L,'right');
+                                $soc4L = makeLadoRow($tree,4,$soc3R,'left');
+                                  $soc5L = makeLadoRow($tree,5,$soc4L,'left');
+                                    $soc6L = makeLadoRow($tree,5,$soc5L,'left');
+                                      $soc7L = makeLadoRow($tree,5,$soc6L,'left');
+                                      $soc7R = makeLadoRow($tree,5,$soc6L,'right');
+                                    $soc6R = makeLadoRow($tree,5,$soc5L,'right');
+                                      $soc7L = makeLadoRow($tree,5,$soc6R,'left');
+                                      $soc7R = makeLadoRow($tree,5,$soc6R,'right');
+                                  $soc5R = makeLadoRow($tree,5,$soc4L,'right');
+                                    $soc6L = makeLadoRow($tree,5,$soc5L,'left');
+                                      $soc7L = makeLadoRow($tree,5,$soc6L,'left');
+                                      $soc7R = makeLadoRow($tree,5,$soc6L,'right');
+                                    $soc6R = makeLadoRow($tree,5,$soc5R,'right');
+                                      $soc7L = makeLadoRow($tree,5,$soc6R,'left');
+                                      $soc7R = makeLadoRow($tree,5,$soc6R,'right');
+                                $soc4R = makeLadoRow($tree,4,$soc3R,'right');
+                                  $soc5L = makeLadoRow($tree,5,$soc4R,'left');
+                                    $soc6L = makeLadoRow($tree,5,$soc5L,'left');
+                                      $soc7L = makeLadoRow($tree,5,$soc6L,'left');
+                                      $soc7R = makeLadoRow($tree,5,$soc6L,'right');
+                                    $soc6R = makeLadoRow($tree,5,$soc5L,'right');
+                                      $soc7L = makeLadoRow($tree,5,$soc6R,'left');
+                                      $soc7R = makeLadoRow($tree,5,$soc6R,'right');
+                                  $soc5R = makeLadoRow($tree,5,$soc4R,'right');
+                                    $soc6L = makeLadoRow($tree,5,$soc5L,'left');
+                                      $soc7L = makeLadoRow($tree,5,$soc6L,'left');
+                                      $soc7R = makeLadoRow($tree,5,$soc6L,'right');
+                                    $soc6R = makeLadoRow($tree,5,$soc5R,'right');
+                                      $soc7L = makeLadoRow($tree,5,$soc6R,'left');
+                                      $soc7R = makeLadoRow($tree,5,$soc6R,'right');
+                            $soc2R = makeLadoRow($tree,2,$soc1R,'right');
+                              $soc3L = makeLadoRow($tree,3,$soc2R,'left');
+                                $soc4L = makeLadoRow($tree,4,$soc3L,'left');
+                                  $soc5L = makeLadoRow($tree,5,$soc4L,'left');
+                                    $soc6L = makeLadoRow($tree,5,$soc5L,'left');
+                                      $soc7L = makeLadoRow($tree,5,$soc6L,'left');
+                                      $soc7R = makeLadoRow($tree,5,$soc6L,'right');
+                                    $soc6R = makeLadoRow($tree,5,$soc5L,'right');
+                                      $soc7L = makeLadoRow($tree,5,$soc6R,'left');
+                                      $soc7R = makeLadoRow($tree,5,$soc6R,'right');
+                                  $soc5R = makeLadoRow($tree,5,$soc4L,'right');
+                                    $soc6L = makeLadoRow($tree,5,$soc5L,'left');
+                                      $soc7L = makeLadoRow($tree,5,$soc6L,'left');
+                                      $soc7R = makeLadoRow($tree,5,$soc6L,'right');
+                                    $soc6R = makeLadoRow($tree,5,$soc5R,'right');
+                                      $soc7L = makeLadoRow($tree,5,$soc6R,'left');
+                                      $soc7R = makeLadoRow($tree,5,$soc6R,'right');
+                                $soc4R = makeLadoRow($tree,4,$soc3L,'right');
+                                  $soc5L = makeLadoRow($tree,5,$soc4R,'left');
+                                    $soc6L = makeLadoRow($tree,5,$soc5L,'left');
+                                      $soc7L = makeLadoRow($tree,5,$soc6L,'left');
+                                      $soc7R = makeLadoRow($tree,5,$soc6L,'right');
+                                    $soc6R = makeLadoRow($tree,5,$soc5L,'right');
+                                      $soc7L = makeLadoRow($tree,5,$soc6R,'left');
+                                      $soc7R = makeLadoRow($tree,5,$soc6R,'right');
+                                  $soc5R = makeLadoRow($tree,5,$soc4R,'right');
+                                    $soc6L = makeLadoRow($tree,5,$soc5L,'left');
+                                      $soc7L = makeLadoRow($tree,5,$soc6L,'left');
+                                      $soc7R = makeLadoRow($tree,5,$soc6L,'right');
+                                    $soc6R = makeLadoRow($tree,5,$soc5R,'right');
+                                      $soc7L = makeLadoRow($tree,5,$soc6R,'left');
+                                      $soc7R = makeLadoRow($tree,5,$soc6R,'right');
+                              $soc3R = makeLadoRow($tree,3,$soc2R,'right');
+                                $soc4L = makeLadoRow($tree,4,$soc3R,'left');
+                                  $soc5L = makeLadoRow($tree,5,$soc4L,'left');
+                                    $soc6L = makeLadoRow($tree,5,$soc5L,'left');
+                                      $soc7L = makeLadoRow($tree,5,$soc6L,'left');
+                                      $soc7R = makeLadoRow($tree,5,$soc6L,'right');
+                                    $soc6R = makeLadoRow($tree,5,$soc5L,'right');
+                                      $soc7L = makeLadoRow($tree,5,$soc6R,'left');
+                                      $soc7R = makeLadoRow($tree,5,$soc6R,'right');
+                                  $soc5R = makeLadoRow($tree,5,$soc4L,'right');
+                                    $soc6L = makeLadoRow($tree,5,$soc5L,'left');
+                                      $soc7L = makeLadoRow($tree,5,$soc6L,'left');
+                                      $soc7R = makeLadoRow($tree,5,$soc6L,'right');
+                                    $soc6R = makeLadoRow($tree,5,$soc5R,'right');
+                                      $soc7L = makeLadoRow($tree,5,$soc6R,'left');
+                                      $soc7R = makeLadoRow($tree,5,$soc6R,'right');
+                                $soc4R = makeLadoRow($tree,4,$soc3R,'right');
+                                  $soc5L = makeLadoRow($tree,5,$soc4R,'left');
+                                    $soc6L = makeLadoRow($tree,5,$soc5L,'left');
+                                      $soc7L = makeLadoRow($tree,5,$soc6L,'left');
+                                      $soc7R = makeLadoRow($tree,5,$soc6L,'right');
+                                    $soc6R = makeLadoRow($tree,5,$soc5L,'right');
+                                      $soc7L = makeLadoRow($tree,5,$soc6R,'left');
+                                      $soc7R = makeLadoRow($tree,5,$soc6R,'right');
+                                  $soc5R = makeLadoRow($tree,5,$soc4R,'right');
+                                    $soc6L = makeLadoRow($tree,5,$soc5L,'left');
+                                      $soc7L = makeLadoRow($tree,5,$soc6L,'left');
+                                      $soc7R = makeLadoRow($tree,5,$soc6L,'right');
+                                    $soc6R = makeLadoRow($tree,5,$soc5R,'right');
+                                      $soc7L = makeLadoRow($tree,5,$soc6R,'left');
+                                      $soc7R = makeLadoRow($tree,5,$soc6R,'right');
+                      ?>
                     </tbody>
                   </table>
                 </div>
@@ -173,16 +431,19 @@
                       </tr>
                     </thead>
                     <tbody>
-                      @foreach( $downlines as $downline)
-                        @if($downline->side == 'right')
-                          <tr id="dl-data-{{$downline->id}}" class="red-item red-user-{{$downline->side}}" data-user-id="{{ $downline->id }}" data-upline="{{ $downline->upline }}" data-status="closed" data-downlines="">
-                            <td>
-                                {{ $downline->nombre }} {{ $downline->apellido_paterno .' '. $downline->apellido_materno}} (ID:{{ $downline->id }})
-                                <span id="load-dl-{{$downline->id}}" class="pull-right hidden">...</span>
-                            </td>
-                          </tr>
-                        @endif
-                      @endforeach
+                      <?php 
+                        $pos2 = makeLadoRow($tree,0,$cur_user->id,'right');
+                          // if($soc_id){
+                          //   $soc_id = makeLadoRow($tree,1,$soc_id,'left');
+                          //   if($soc_id){
+                          //     makeLadoRow($tree,2,$soc_id,'left');
+                          //   }
+                          //   $soc_id = makeLadoRow($tree,1,$soc_id,'right');
+                          //   if($soc_id){
+                          //     makeLadoRow($tree,2,$soc_id,'left');
+                          //   }
+                          // }
+                      ?>
                     </tbody>
                   </table>
                 </div>
@@ -193,6 +454,10 @@
           <div role="tabpanel" class="tab-pane" id="listado">
             Listado
           </div><!-- /tabpane listado-->
+
+          <div class="side-counts">
+              <?php showSideCounts(); ?>
+          </div>
         </div>
       </div>
 
