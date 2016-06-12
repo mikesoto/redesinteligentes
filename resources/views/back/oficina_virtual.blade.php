@@ -76,8 +76,7 @@
             if($lv_usr){
               foreach($arr as $socio){
                 if($socio->upline == $lv_usr && $socio->side == $side){
-                  $color = ($side == 'left')? 'primary' : 'success';
-                  echo '<label class="label label-'.$color.'">'.$socio->user.'</label>';
+                  echo '<label class="label label-primary">'.$socio->user.'</label>';
                   $assigned = true;
                   return $socio->id;
                 }
@@ -1226,7 +1225,12 @@
               <?php 
                 global $left_count;
                 global $right_count;
-                echo '<label class="label label-primary">Izquierdo: '.$left_count.'</label> | <label class="label label-success">Derecho: '.$right_count.'</label>';
+                $total_count = $left_count+$right_count;
+                echo '<h4>
+                        <label class="label label-default">Izquierdo: '.$left_count.'</label> | 
+                        <label class="label label-default">Derecho: '.$right_count.'</label> | 
+                        <label class="label label-default">Total: '.$total_count.'</label> | 
+                      </h4>';
               ?>
           </div>
         </div>
