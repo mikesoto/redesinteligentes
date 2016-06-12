@@ -122,6 +122,11 @@ tr.red-user-right{
 	background-color:rgba(0,0,0,0.05);
 }
 
+.red-box section.downlines-container:hover{
+	border-top:thin solid #00fff6;
+	background-color:rgba(165,255,247,0.5);
+}
+
 
 
 footer{
