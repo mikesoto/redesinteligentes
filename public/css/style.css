@@ -118,13 +118,17 @@ tr.red-user-right{
 
 .red-box section.downlines-container{
 	border-top:thin solid #ccc;
+	border-left:thin solid #ccc;
+	border-right:thin solid #ccc;
 	margin-top:3px;
 	background-color:rgba(0,0,0,0.05);
 }
 
 .red-box section.downlines-container:hover{
-	border-top:thin solid #00fff6;
-	background-color:rgba(165,255,247,0.5);
+	border-top:thin solid #333;
+	border-left:thin solid #333;
+	border-right:thin solid #333;
+	background-color:rgba(165,255,247,0.1);
 }
 
 
