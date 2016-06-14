@@ -1,17 +1,33 @@
 @extends('layouts.front')
+
+<?php $cur_user = Auth::user();?>
+
 @section('content')
 <div class="row">
+  <!-- WELCOME HEADER -->
+  @if($cur_user->id == 1)
+  <div class="row header-welcome-backoffice">
+    <div class="col-sm-8 text-center">
+      <h3>Back Office - Redes Inteligentes</h3>
+    </div>
+  @else
+  <div class="row header-welcome-oficina-virtual">
+    <div class="col-sm-8 text-center">
+      <h3>Oficina Virtual - {{ $cur_user->nombre }} {{ $cur_user->apellido_paterno }} {{ $cur_user->apellido_materno }}</h3>
+    </div>
+  @endif
+    <div class="col-sm-4 text-right">
+      <strong>Usuario:</strong> {{ $cur_user->user }} &nbsp; | &nbsp;
+      <a class="btn btn-danger btn-sm" id="logout-btn" href="/logout">Cerrrar Sessión</a>
+    </div>
+  </div>
+  <!-- /WELCOME HEADER -->
   <div class="row">
     <div class="col-sm-12 text-center">
       <!-- Display Validation Errors -->
       @include('common.errors')
       <!-- Display Messages -->
       @include('common.messages')
-    </div>
-    <?php $cur_user = Auth::user();?>
-    <div class="col-sm-12 text-right">
-      <strong>Usuario:</strong> {{ $cur_user->user }} &nbsp; | &nbsp;
-      <a class="btn btn-danger btn-sm" id="logout-btn" href="/logout">Cerrrar Sessión</a>
     </div>
   </div>
   <hr>
@@ -4301,7 +4317,7 @@
                 echo '<h4>
                         <label class="label label-default">Izquierdo: '.$left_count.'</label> | 
                         <label class="label label-default">Derecho: '.$right_count.'</label> | 
-                        <label class="label label-default">Total: '.$total_count.'</label> | 
+                        <label class="label label-default">Total: '.$total_count.'</label> 
                       </h4>';
               ?>
           </div>

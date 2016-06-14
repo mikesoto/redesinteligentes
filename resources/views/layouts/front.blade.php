@@ -43,6 +43,7 @@
 			  </div><!-- /.container-fluid -->
 			</nav>
 		</header>
+
 		
 		<div class="main-content">
 		@yield('content')
