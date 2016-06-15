@@ -4309,8 +4309,7 @@
           </div><!-- /tabpane lados-->
 
           <div role="tabpanel" class="tab-pane" id="listado">
-            Listado
-            <div class="panel panel-info">
+            <div class="panel panel-success">
               <div class="panel-body">
                 <div class="col-sm-12">
                   <table id="listado-table" class="table table-hover">
@@ -4320,6 +4319,7 @@
                         <th>Usuario</th>
                         <th>Nombre</th>
                         <th>Fecha Ingreso</th>
+                        <th>Lado</th>
                         <th>Apellido P</th>
                         <th>Apellido M</th>
                         <th>Patrocinador</th>
@@ -4335,7 +4335,10 @@
                                     <td>'.$soc->id.'</td>
                                     <td>'.$soc->user.'</td>
                                     <td>'.$soc->nombre.'</td>
-                                    <td>'.$soc->fecha_ingreso.'</td>
+                                    <td>'.$soc->fecha_ingreso.'</td>';
+                                    $color = ($soc->side == 'left')? 'success' : 'primary';
+                                    $side_txt = ($soc->side == 'left')? 'izquierdo' : 'derecho';
+                            echo   '<td><label class="label label-'.$color.'">'.$side_txt.'</label></td>
                                     <td>'.$soc->apellido_paterno.'</td>
                                     <td>'.$soc->apellido_materno.'</td>
                                     <td>'.$soc->patrocinador.'</td>
