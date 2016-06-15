@@ -23,7 +23,7 @@
 		Usuario: {{ $newUser->user }}<br>
 		Contraseña: {{ $newUser->pwd_str }}<br>
 		Puedes iniciar sessión al sistema de oficina virtual en:<br>
-		<a href="http://app.redesinteligentes.com.mx/oficina-virtual" target="_blank">
+		<a href="http://redesinteligentes.com.mx/oficina-virtual" target="_blank">
 			http://app.redesinteligentes.com.mx/oficina-virtual
 		</a>
 	</p>

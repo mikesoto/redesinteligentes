@@ -99,7 +99,7 @@
               }
             }
             if(!$assigned){
-              echo '<label class="label label-default"> </label>';
+              echo '';
               return 0;
             }
           }
@@ -107,16 +107,18 @@
 
           function makeUserSection($usr,$tree,$lvl){
               if( isset($tree[$lvl]) ){
-                echo '<section class="downlines-container">
-                        <article class="red-box">';
-                          $usr2 = makeRedLabel($tree[$lvl],$usr,'left');
-                          makeUserSection($usr2,$tree,$lvl+1);
-                echo '  </article>
-                        <article class="red-box">';
-                          $usr3 = makeRedLabel($tree[$lvl],$usr,'right');
-                          makeUserSection($usr3,$tree,$lvl+1);
-                echo '  </article>
-                      </section>';
+                if($usr){
+                  echo '<section class="downlines-container">
+                          <article class="red-box">';
+                            $usr2 = makeRedLabel($tree[$lvl],$usr,'left');
+                            makeUserSection($usr2,$tree,$lvl+1);
+                  echo '  </article>
+                          <article class="red-box">';
+                            $usr3 = makeRedLabel($tree[$lvl],$usr,'right');
+                            makeUserSection($usr3,$tree,$lvl+1);
+                  echo '  </article>
+                        </section>';
+                }
               }
           }
         ?>
