@@ -4307,6 +4307,46 @@
 
           <div role="tabpanel" class="tab-pane" id="listado">
             Listado
+            <div class="panel panel-info">
+              <div class="panel-body">
+                <div class="col-sm-12">
+                  <table id="listado-table" class="table table-hover">
+                    <thead>
+                      <tr>
+                        <th>ID</th>
+                        <th>Usuario</th>
+                        <th>Nombre</th>
+                        <th>Fecha Ingreso</th>
+                        <th>Apellido P</th>
+                        <th>Apellido M</th>
+                        <th>Patrocinador</th>
+                        <th>Upline</th>
+                        <th>Asignado</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <?php
+                        foreach($tree as $lvl_group){
+                          foreach($lvl_group as $soc){
+                            echo '<tr>
+                                    <td>'.$soc->id.'</td>
+                                    <td>'.$soc->user.'</td>
+                                    <td>'.$soc->nombre.'</td>
+                                    <td>'.$soc->fecha_ingreso.'</td>
+                                    <td>'.$soc->apellido_paterno.'</td>
+                                    <td>'.$soc->apellido_materno.'</td>
+                                    <td>'.$soc->patrocinador.'</td>
+                                    <td>'.$soc->upline.'</td>
+                                    <td>'.$soc->asignado.'</td>
+                                  </tr>';
+                          }
+                        }
+                      ?>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
           </div><!-- /tabpane listado-->
 
           <div class="side-counts">
