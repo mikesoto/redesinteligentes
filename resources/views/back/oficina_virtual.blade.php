@@ -177,8 +177,8 @@
                       $right_count++;
                     }
                     //continue down to the next level
-                    makeLadoRow($tree,$level+1,'L',$socio->id,'left');
-                    makeLadoRow($tree,$level+1,'R',$socio->id,'right');
+                    makeLadoRow($tree,$level+1,$to_count,$socio->id,'left');
+                    makeLadoRow($tree,$level+1,$to_count,$socio->id,'right');
                     //return $socio->id;
                   }
                 }
