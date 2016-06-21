@@ -170,6 +170,7 @@ class BackController extends Controller
 		$fields = [
 			'upline' 									=> $request->upline,
 			'patrocinador' 						=> $request->patrocinador,
+			'side'										=> $request->lado,
 			'fecha_ingreso' 					=> $request->fecha_ingreso,
 			'nombre' 									=> $request->nombre,
 			'apellido_paterno' 				=> $request->apellido_paterno,
@@ -189,6 +190,7 @@ class BackController extends Controller
 		$rules = [
 			'upline' 									=> 'required',
 			'patrocinador' 						=> 'required',
+			'side'										=> 'required',
 			'fecha_ingreso' 					=> 'required',
 			'nombre' 									=> 'required',
 			'apellido_paterno' 				=> 'required',
@@ -217,8 +219,9 @@ class BackController extends Controller
       return redirect('/oficina-virtual')->withInput();
     }
     //check if the upline user already has his two primary (left and right)
-  	$count_uplines = User::where('upline','=',$request->upline)->count();
-  	if($count_uplines >= 2){
+  	$count_uplines_left = User::where('upline','=',$request->upline)->where('side','=','left')->count();
+  	$count_uplines_right = User::where('upline','=',$request->upline)->where('side','=','right')->count();
+  	if(($count_uplines_left + $count_uplines_right) == 2){
   		$messages = array(
 			  'required' => 'El usuario de upline ya cuenta con sus dos primarios. Por lo tanto no puede ser upline de este nuevo usuario.',
 			);
@@ -247,12 +250,22 @@ class BackController extends Controller
 	  }
 	  
   	
-  	//determine which side based on count_uplines
-  	if($count_uplines == 0){
-  		$fields['side'] = 'left';
+  	//determine if requested side is already filled
+  	if($count_uplines_left && $request->lado == 'left'){
+  		$messages = array(
+			  'required' => 'El usuario de upline ya cuenta con su primario izquierdo.',
+			);
+			$validator = \Validator::make(['custom_error' => ''], ['custom_error' => 'required'],$messages);
+			\Session::push('errors', $validator->messages() );
+			return redirect('/oficina-virtual')->withInput($request->except('upline'));
   	}
-  	if($count_uplines == 1){
-  		$fields['side'] = 'right';
+  	if($count_uplines_right && $request->lado == 'right'){
+  		$messages = array(
+			  'required' => 'El usuario de upline ya cuenta con su primario derecho.',
+			);
+			$validator = \Validator::make(['custom_error' => ''], ['custom_error' => 'required'],$messages);
+			\Session::push('errors', $validator->messages() );
+			return redirect('/oficina-virtual')->withInput($request->except('upline'));
   	}
 
     //create user password

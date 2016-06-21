@@ -42,9 +42,17 @@
             </div>
             
             <div class="row">
-              <div class="col-sm-4">
+              <div class="col-sm-5">
                 <label for="fecha_ingreso">Fecha de Ingreso*</label>
                 <input type="text" class="form-control date_field" id="fecha_ingreso" name="fecha_ingreso" value="{{ (old('fecha_ingreso'))? old('fecha_ingreso') : date('d/m/Y', mktime(10,00,0, date('n'), date('j'), date('Y')) ) }}" required>
+              </div>
+              <div class="col-sm-7">
+                <label for="lado">Lado</label>
+                <select id="lado" name="lado" class="form-control" required>
+                  <option></option>
+                  <option value="left" @if(old('lado') == 'left') {{ 'selected' }} @endif>Izquierdo</option>
+                  <option value="right" @if(old('lado') == 'right') {{ 'selected' }} @endif>Derecho</option>
+                </select>
               </div>
             </div>
             
