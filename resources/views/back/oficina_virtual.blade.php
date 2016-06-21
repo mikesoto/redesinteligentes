@@ -249,8 +249,28 @@
                     </thead>
                     <tbody>
                       <?php
+                        //array to hold sorted users list by id
+                        $users_arr = [];
+                        //populate the users array
                         foreach($tree as $lvl_group){
                           foreach($lvl_group as $soc){
+                            array_push($users_arr,$soc);
+                          }
+                        }  
+
+                        //function to compare the ids 
+                        function compare($a, $b){
+                          if($a->id < $b->id){
+                            return -1;
+                          }
+                          if($a->id > $b->id){
+                            return 1;
+                          }
+                        }
+                        //sort the users_arr contents using sort function
+                        usort($users_arr, "compare");
+                        //display the list
+                        foreach($users_arr as $soc){
                             echo '<tr>
                                     <td>'.$soc->id.'</td>
                                     <td>'.$soc->user.'</td>
@@ -265,8 +285,8 @@
                                     <td>'.$soc->upline.'</td>
                                     <td>'.$soc->asignado.'</td>
                                   </tr>';
-                          }
                         }
+                         
                       ?>
                     </tbody>
                   </table>
