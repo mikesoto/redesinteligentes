@@ -117,6 +117,47 @@ tr.red-user-right{
 }
 
 
+.downloads-link{
+	position:relative;
+	width:130px;
+	height:150px;
+	background-size:cover;
+	background-repeat: no-repeat;
+	background-position: center;
+	background-color:#333;
+	border-radius: 5px;
+	display:inline-block;
+	margin-left:5px;
+}
+
+.download-link a{
+	text-decoration:none;
+}
+
+.download-title {
+	position:absolute;
+	bottom:0;
+	width:100%;
+	height:150px;
+	text-align:center;
+	background-color:rgba(0,0,0,0.4);
+	color:#fff;
+}
+
+.download-title .title-text{
+	position:absolute;
+	height:30px;
+	bottom:0;
+	width:100%;
+	text-align:center;
+	font-weight: bold;
+	font-size:11px;
+}
+
+.download-title:hover{
+	background-color:rgba(0,0,0,0);
+}
+
 
 /* =====================================================================
 ============================= RED MAP ==================================
