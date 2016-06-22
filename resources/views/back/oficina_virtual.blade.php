@@ -39,13 +39,13 @@
         </div>
         <div class="panel-body text-center">
           <button class="btn btn-primary cpanel-link" id="cpanel-dashboard" data-panelName="dashboard">Dashboard</button>
-          <button class="btn btn-info cpanel-link" id="cpanel-red" data-panelName="red">Red</button>
-          <button class="btn btn-warning cpanel-link" id="cpanel-comissiones" data-panelName="comissiones">Comisiones</button>
+          <button class="btn btn-primary cpanel-link" id="cpanel-red" data-panelName="red">Red</button>
+          <button class="btn btn-primary cpanel-link" id="cpanel-comissiones" data-panelName="comissiones">Comisiones</button>
           <button class="btn btn-default" id="datos-personales-btn" data-toggle="modal" data-target="#datos-personales-modal">Datos Personales</button>
           @if (Auth::user()->id == 1)
-            <button class="btn btn-success" id="register-user-btn" data-toggle="modal" data-target="#register-user-modal">Registrar Socio</button>
+            <button class="btn btn-warning" id="register-user-btn" data-toggle="modal" data-target="#register-user-modal">Registrar Socio</button>
           @endif 
-          <button class="btn btn-success cpanel-link" id="cpanel-downloads" data-panelName="downloads">Descargas</button>
+          <button class="btn btn-primary cpanel-link" id="cpanel-downloads" data-panelName="downloads">Descargas</button>
         </div>
       </div>
     </div>    
@@ -87,36 +87,92 @@
 
 
         <?php
-          function makeRedLabel($arr,$lv_usr,$side){
+          //array to hold sorted users list by id
+          $users_arr = [];
+          //populate the users array
+          foreach($tree as $lvl_group){
+            foreach($lvl_group as $soc){
+              array_push($users_arr,$soc);
+            }
+          }  
+
+          //function to compare the ids 
+          function compare($a, $b){
+            if($a->id < $b->id){
+              return -1;
+            }
+            if($a->id > $b->id){
+              return 1;
+            }
+          }
+          //sort the users_arr contents using sort function
+          usort($users_arr, "compare");
+
+
+          function makeRedLabel($arr,$lv_usr,$side,$users_arr,$hasmult){
             $assigned = false;
+            $u_count = 1;
+            $is_mult = 'no';
+            //only execute if the upline (lvl_usr) is not 0
             if($lv_usr){
+              //loop through the tree level given
               foreach($arr as $socio){
+                //find the child of side given
                 if($socio->upline == $lv_usr && $socio->side == $side){
+                  //determine class color
                   $color = ($side == 'left')? 'success' : 'primary';
-                  echo '<label class="label label-'.$color.'">'.$socio->user.'</label>';
+                  //determine if is mult
+                  foreach($users_arr as $u){
+                    //find this socio in the ordered users array
+                    if($u->id == $socio->id){
+                      //check if is a multiple of five
+                      if($u_count % 5 == 0){
+                        if(!$hasmult){
+                          $is_mult = 'multiple';
+                        }
+                      }
+                    }
+                    $u_count++;
+                  }
+                  //output the label
+                  echo '<label class="label label-'.$color.' '.$is_mult.'">'.$socio->user.'</label>';
+                  //set assigned true
                   $assigned = true;
-                  return $socio->id;
+                  //return child's id
+                  return $socio->id.'_'.$is_mult;
                 }
               }
             }
             if(!$assigned){
               echo '';
-              return 0;
+              return '0_no';
             }
           }
 
 
-          function makeUserSection($usr,$tree,$lvl){
+          function makeUserSection($usr,$tree,$lvl,$users_arr,$hasmult){
               if( isset($tree[$lvl]) ){
-                if($usr){
-                  echo '<section class="downlines-container">
+                $usr1_arr = explode('_',$usr);
+                $usr1ID = $usr1_arr[0];
+                $usr1isMult = $usr1_arr[1];
+                if($usr1ID){
+                  if(!$hasmult){
+                    $hasmult = ($usr1isMult == 'multiple')? true : false;
+                  }
+                  echo '<section class="downlines-container '.$usr1isMult.'">
                           <article class="red-box">';
-                            $usr2 = makeRedLabel($tree[$lvl],$usr,'left');
-                            makeUserSection($usr2,$tree,$lvl+1);
+                            $usr2 = makeRedLabel($tree[$lvl],$usr1ID,'left',$users_arr,$hasmult);
+                            $usr2_arr = explode('_',$usr2);
+                            $usr2ID = $usr2_arr[0];
+                            $usr2isMult = $usr2_arr[1];
+                            makeUserSection($usr2,$tree,$lvl+1,$users_arr,$hasmult);
                   echo '  </article>
                           <article class="red-box">';
-                            $usr3 = makeRedLabel($tree[$lvl],$usr,'right');
-                            makeUserSection($usr3,$tree,$lvl+1);
+                            $usr3 = makeRedLabel($tree[$lvl],$usr1ID,'right',$users_arr,$hasmult);
+                            $usr3_arr = explode('_',$usr3);
+                            $usr3ID = $usr3_arr[0];
+                            $usr3isMult = $usr3_arr[1];
+                            makeUserSection($usr3,$tree,$lvl+1,$users_arr,$hasmult);
                   echo '  </article>
                         </section>';
                 }
@@ -138,7 +194,7 @@
             <div id="red-map-wrap" class="row text-center red-map-wrap">
               <article id="main-red-box" class="red-box">
                 <label class="label label-warning red-socio">{{ $cur_user->user }}</label>
-                <?php makeUserSection($cur_user->id,$tree,0);?>
+                <?php makeUserSection($cur_user->id.'_no',$tree,0,$users_arr,false);?>
               </article>
             </div>
           </div><!-- /tabpane arbol-->
@@ -249,26 +305,6 @@
                     </thead>
                     <tbody>
                       <?php
-                        //array to hold sorted users list by id
-                        $users_arr = [];
-                        //populate the users array
-                        foreach($tree as $lvl_group){
-                          foreach($lvl_group as $soc){
-                            array_push($users_arr,$soc);
-                          }
-                        }  
-
-                        //function to compare the ids 
-                        function compare($a, $b){
-                          if($a->id < $b->id){
-                            return -1;
-                          }
-                          if($a->id > $b->id){
-                            return 1;
-                          }
-                        }
-                        //sort the users_arr contents using sort function
-                        usort($users_arr, "compare");
                         //display the list
                         foreach($users_arr as $soc){
                             echo '<tr>

@@ -188,6 +188,10 @@ tr.red-user-right{
 	margin:1px;
 }
 
+.label.multiple{
+	border:2px solid red;
+}
+
 .red-box section.downlines-container{
 	border-top:thin solid #ccc;
 	border-left:thin solid #ccc;
@@ -203,6 +207,17 @@ tr.red-user-right{
 	background-color:rgba(165,255,247,0.1);
 }
 
+.red-box section.downlines-container.multiple{
+	border-top:2px solid orange;
+	border-left:2px solid orange;
+	border-right:2px solid orange;
+}
+
+.red-box section.downlines-container.multiple:hover{
+	border-top:2px solid orange;
+	border-left:2px solid orange;
+	border-right:2px solid orange;
+}
 
 
 footer{
