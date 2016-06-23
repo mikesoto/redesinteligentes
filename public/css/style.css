@@ -188,7 +188,7 @@ tr.red-user-right{
 }
 
 .label.multiple{
-	border:2px solid red;
+	border:2px solid #D9534F;
 }
 .label.not-mult{
 	border:2px solid brown;

@@ -189,6 +189,8 @@ $(document).ready(function() {
 				n_count++;
 			}
 	  }
+	  //update the counts area with the total multiples
+	  $(".side-counts h4").append('| <label class="label label-danger">Multiples: '+mult_counter+'</label> ');
 	}
 
 	//check if the create user form is present
