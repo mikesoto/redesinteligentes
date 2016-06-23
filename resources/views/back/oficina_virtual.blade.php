@@ -190,7 +190,7 @@
                   //look for the specified side and parent socio
                   if($socio->side == $side && $socio->upline == $upline){
                     //create row for the found user
-                    echo '<tr class="red-item red-user-'.$side.'">
+                    echo '<tr id="lado-row-'.$socio->id.'" class="red-item red-user-'.$side.'">
                             <td>';
                               //indicate the level with - indents 
                               for($i = 0; $i < $level; $i++){
@@ -285,7 +285,7 @@
                       <?php
                         //display the list
                         foreach($users_arr as $soc){
-                            echo '<tr>
+                            echo '<tr id="listado-row-'.$soc->id.'" class="listado-row">
                                     <td>'.$soc->id.'</td>
                                     <td>'.$soc->user.'</td>
                                     <td>'.$soc->nombre.'</td>

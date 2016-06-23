@@ -159,7 +159,7 @@ $(document).ready(function() {
 		}
 		setRedItemsClick();
 
-		//count the users
+		// ============================ COUNT USER MULTIPLES ===========================
 	  var users_length = users_sorted.length;
 	  var n_count = 1;
 	  var disabled_uplines = [];
@@ -180,6 +180,10 @@ $(document).ready(function() {
 		      $("#label-"+u.id).addClass('multiple');
 		      $("#label-"+u.id).append('<sup> * '+mult_counter+'</sup>');
 		      $("#downlines-"+u.id).addClass('multiple');
+		      $("#lado-row-"+u.id).addClass('multiple');
+		      $("#lado-row-"+u.id).append('<sup> * '+mult_counter+'</sup>');
+		      $("#listado-row-"+u.id).addClass('multiple');
+		      $("#listado-row-"+u.id).append('<sup> * '+mult_counter+'</sup>');
 		      console.log(n_count+' '+u.user+' is multiple '+mult_counter+' ... adding to disabled uplines');
 		      disabled_uplines.push(u.id);
 		      //console.info(disabled_uplines);

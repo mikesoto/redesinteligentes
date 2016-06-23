@@ -98,6 +98,18 @@ tr.red-user-right{
 	border-left:3px solid #449D44;
 }
 
+tr.red-item.multiple{
+	background-color:#eee;
+	border-top:2px solid #D9534F;
+	border-right:2px solid #D9534F;
+	border-bottom:2px solid #D9534F;
+}
+
+tr.listado-row.multiple{
+	background-color:#eee;
+	border:2px solid #D9534F;
+}
+
 .ghost{
 	color:#ccc;
 }
