@@ -16,8 +16,7 @@
 	padding:20px;
 	margin-top:-30px;
 	margin-bottom:10px;
-	margin-left:-20%;
-	width:130%;
+	width:100%;
 }
 .header-welcome-backoffice h3{
 	margin-top:10px;
@@ -190,6 +189,9 @@ tr.red-user-right{
 
 .label.multiple{
 	border:2px solid red;
+}
+.label.not-mult{
+	border:2px solid brown;
 }
 
 .red-box section.downlines-container{

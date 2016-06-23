@@ -283,4 +283,36 @@ $(document).ready(function() {
   		$("#red-map-controls").addClass('hidden');
   	}
   });
+
+
+  //count the users
+  var users_length = users_sorted.length;
+  var n_count = 1;
+  var disabled_uplines = [];
+  var mult_counter = 0;
+  for(i=0; i < users_length; i++){
+  	u = users_sorted[i];
+  	d = disabled_uplines;
+  	//console.log('checking user '+u.id+' whose upline is '+u.upline);
+  	//check if the user's upline is listed in disabled uplines
+  	if(d.indexOf(u.upline) > -1){
+  		//console.warn('user '+u.id+'\'s upline in disabled uplines, adding their id to disabled uplines and skipping this user');
+  		d.push(u.id);
+  	}else{
+	  	//check if this is a multiple of 5
+	    if(n_count % 5 == 0){
+	    	mult_counter+=1;
+	    	//add classes to the label and downlines container for this user
+	      $("#label-"+u.id).addClass('multiple');
+	      $("#label-"+u.id).append('<sup> '+mult_counter+'</sup>');
+	      $("#downlines-"+u.id).addClass('multiple');
+	      console.log(n_count+' '+u.user+' is multiple '+mult_counter+' ... adding to disabled uplines');
+	      disabled_uplines.push(u.id);
+	      //console.info(disabled_uplines);
+	  	}else{
+	  		//console.log(n_count+' '+u.user);
+	  	}
+			n_count++;
+		}
+  }
 });

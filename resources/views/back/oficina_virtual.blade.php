@@ -1,4 +1,4 @@
-@extends('layouts.front')
+@extends('layouts.back')
 
 <?php $cur_user = Auth::user();?>
 
@@ -106,73 +106,51 @@
             }
           }
           //sort the users_arr contents using sort function
-          usort($users_arr, "compare");
+          usort($users_arr, "compare");   
+     
 
+          //variable to keep track of the sistems steps (logical flow when building tree)
+          $step = 0;
 
-          function makeRedLabel($arr,$lv_usr,$side,$users_arr,$hasmult){
+          function makeRedLabel($arr,$lv_usr,$side){
             $assigned = false;
-            $u_count = 1;
-            $is_mult = 'no';
+            global $step;
             //only execute if the upline (lvl_usr) is not 0
             if($lv_usr){
               //loop through the tree level given
               foreach($arr as $socio){
                 //find the child of side given
                 if($socio->upline == $lv_usr && $socio->side == $side){
+                  $step++;
                   //determine class color
                   $color = ($side == 'left')? 'success' : 'primary';
-                  //determine if is mult
-                  foreach($users_arr as $u){
-                    //find this socio in the ordered users array
-                    if($u->id == $socio->id){
-                      //check if is a multiple of five
-                      if($u_count % 5 == 0){
-                        if(!$hasmult){
-                          $is_mult = 'multiple';
-                        }
-                      }
-                    }
-                    $u_count++;
-                  }
                   //output the label
-                  echo '<label class="label label-'.$color.' '.$is_mult.'">'.$socio->user.'</label>';
+                  echo '<label id="label-'.$socio->id.'" class="label label-'.$color.'" data-step="'.$step.'">'.$socio->user.'</label>';
                   //set assigned true
                   $assigned = true;
                   //return child's id
-                  return $socio->id.'_'.$is_mult;
+                  return $socio->id;
                 }
               }
             }
             if(!$assigned){
               echo '';
-              return '0_no';
+              return 0;
             }
           }
 
 
-          function makeUserSection($usr,$tree,$lvl,$users_arr,$hasmult){
+          function makeUserSection($usr,$tree,$lvl){
               if( isset($tree[$lvl]) ){
-                $usr1_arr = explode('_',$usr);
-                $usr1ID = $usr1_arr[0];
-                $usr1isMult = $usr1_arr[1];
-                if($usr1ID){
-                  if(!$hasmult){
-                    $hasmult = ($usr1isMult == 'multiple')? true : false;
-                  }
-                  echo '<section class="downlines-container '.$usr1isMult.'">
+                if($usr){
+                  echo '<section class="downlines-container" id="downlines-'.$usr.'">
                           <article class="red-box">';
-                            $usr2 = makeRedLabel($tree[$lvl],$usr1ID,'left',$users_arr,$hasmult);
-                            $usr2_arr = explode('_',$usr2);
-                            $usr2ID = $usr2_arr[0];
-                            $usr2isMult = $usr2_arr[1];
-                            makeUserSection($usr2,$tree,$lvl+1,$users_arr,$hasmult);
+                            $usr2 = makeRedLabel($tree[$lvl],$usr,'left');
+                            makeUserSection($usr2,$tree,$lvl+1);
                   echo '  </article>
                           <article class="red-box">';
-                            $usr3 = makeRedLabel($tree[$lvl],$usr1ID,'right',$users_arr,$hasmult);
-                            $usr3_arr = explode('_',$usr3);
-                            $usr3ID = $usr3_arr[0];
-                            $usr3isMult = $usr3_arr[1];
-                            makeUserSection($usr3,$tree,$lvl+1,$users_arr,$hasmult);
+                            $usr3 = makeRedLabel($tree[$lvl],$usr,'right');
+                            makeUserSection($usr3,$tree,$lvl+1);
                   echo '  </article>
                         </section>';
                 }
@@ -194,7 +172,7 @@
             <div id="red-map-wrap" class="row text-center red-map-wrap">
               <article id="main-red-box" class="red-box">
                 <label class="label label-warning red-socio">{{ $cur_user->user }}</label>
-                <?php makeUserSection($cur_user->id.'_no',$tree,0,$users_arr,false);?>
+                <?php makeUserSection($cur_user->id,$tree,0);?>
               </article>
             </div>
           </div><!-- /tabpane arbol-->
@@ -532,5 +510,30 @@
     </div>
   </div><!-- /.office-sidebar -->
 </div>
+
+<script type="text/javascript">
+  //array of all users sorted by id
+  var users_sorted = [
+  <?php 
+    $arr_length = count($users_arr);
+    for($i=0; $i < $arr_length; $i++){
+      echo '{
+              "id" : '.$users_arr[$i]->id.',
+              "user" : "'.$users_arr[$i]->user.'",
+              "nombre" : "'.$users_arr[$i]->nombre.'",
+              "fecha_ingreso" : "'.$users_arr[$i]->fecha_ingreso.'",
+              "apellido_paterno" : "'.$users_arr[$i]->apellido_paterno.'",
+              "apellido_materno" : "'.$users_arr[$i]->apellido_materno.'",
+              "patrocinador" : '.$users_arr[$i]->patrocinador.',
+              "upline" : '.$users_arr[$i]->upline.',
+              "asignado" : '.$users_arr[$i]->asignado.'
+            }';
+      if($i < $arr_length){
+        echo ',';
+      }
+    }
+  ?>
+  ];
+</script>
 @include('back.oficina_modals.register_user_modal')
 @endsection
