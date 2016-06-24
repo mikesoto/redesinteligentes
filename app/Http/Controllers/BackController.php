@@ -100,7 +100,6 @@ class BackController extends Controller
 		function getWeekInfo($refDate){
     	$data = [];
 	 	  $dt = Carbon::parse($refDate);
-	 	  echo '<br>';
 	 	  $week_num  						= $dt->weekOfYear;
 	 	  $month_num 						= padLeft($dt->month);
 			$year_num 						= $dt->year;
