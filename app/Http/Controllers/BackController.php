@@ -51,8 +51,21 @@ class BackController extends Controller
 	  return $n_lvl;
   }
 
-  public function oficinaVirtual(){
-  	$cur_user = Auth::user();//tu
+  public function oficinaVirtual(Request $request){
+  	$req_usr = $request->input('u', false);
+  	$cur_user = false;
+  	if($req_usr){
+  		if(!is_numeric($req_usr)){
+  			return redirect('/oficina-virtual');
+  		}else{
+  			$cur_user =  User::find($req_usr);
+  		}
+  		if(!$cur_user){
+  			return redirect('/oficina-virtual');
+  		}
+  	}else{
+  		$cur_user = Auth::user();
+  	}
   	$tree = [];
   	$tree[0] = [];
   	$users = User::where('upline', '=', $cur_user->id)->get();
