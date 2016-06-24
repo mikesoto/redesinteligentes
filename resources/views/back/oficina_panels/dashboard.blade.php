@@ -16,7 +16,7 @@
               <tr>
                 <td>{{ count($downlines) }}</td>
                 <td>{{ count($comsPatr)}}</td>
-                <td>${{ $ganancias }}</td>
+                <td>${{ number_format($ganancias) }}</td>
                 <td>Bronce</td>
               </tr>
             </tbody>

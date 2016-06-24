@@ -37,6 +37,7 @@ class BackController extends Controller
 	  	foreach($cur as $socio){
 	  		//collect downlines for each user in current level
 	  		$collection = User::where('upline', '=', $socio->id)->get();
+	  
 	  		//echo "socio ".$n_count." has ".count($collection)." downlines<br/>";
 	  		//add each user to the next level array
 	  		foreach($collection as $user){
@@ -72,17 +73,67 @@ class BackController extends Controller
 			$comsPatr_query->where('user_id','=',$cur_user->id);
 		}
 		$comsPatr = $comsPatr_query->get();
+		
 		//generate ganancias value
 		$ganancias = 0.00;
-		foreach($comsPatr as $comPatr){
-			if($comPatr->user_id == $cur_user->id){
-				$ganancias += $comPatr->amount;
+		if($cur_user->id == 1){
+			//earnings for the company come from the users investment
+			foreach($comsPatr as $comPatr){
+				$ganancias += 1150;
+			}
+		}else{
+			//earnings for users are from the patrocinio amount
+			foreach($comsPatr as $comPatr){
+				if($comPatr->user_id == $cur_user->id){
+					$ganancias += $comPatr->amount;
+				}
 			}
 		}
 
+		
+
+		//=============================== DATES INFO ========================
 		function padLeft($var){
 			return str_pad($var,2,'0',STR_PAD_LEFT);
 		}
+
+		function getWeekInfo($refDate){
+    	$data = [];
+	 	  $dt = Carbon::parse($refDate);
+	 	  echo '<br>';
+	 	  $week_num  						= $dt->weekOfYear;
+	 	  $month_num 						= padLeft($dt->month);
+			$year_num 						= $dt->year;
+			$day_num 							= padLeft($dt->day);
+			$day_of_week 					= $dt->dayOfWeek;
+			$week_lunes 					= $dt->startOfWeek();
+				$week_lunes_ref 		= carbon::parse($week_lunes->toDateTimeString());
+			$week_martes 					= $week_lunes_ref->addDay();
+				$week_martes_ref 		= carbon::parse($week_martes->toDateTimeString());
+			$week_miercoles 			= $week_martes_ref->addDay();
+				$week_miercoles_ref = carbon::parse($week_miercoles->toDateTimeString());
+			$week_jueves 					= $week_miercoles->addDay();
+				$week_jueves_ref 		= carbon::parse($week_jueves->toDateTimeString());
+			$week_viernes 				= $week_jueves_ref->addDay();
+				$week_viernes_ref 	= carbon::parse($week_viernes->toDateTimeString());
+			$week_sabado 					= $week_viernes_ref->addDay();
+				$week_sabado_ref 		= carbon::parse($week_sabado->toDateTimeString());
+			$week_domingo 				= $week_sabado_ref->addDay();
+	    
+	    $data['week_num']      		= $week_num;
+			$data['month_num']      	= $month_num;
+			$data['year_num']      		= $year_num;
+			$data['day_num']      		= $day_num;
+			$data['day_of_week']      = $day_of_week;
+			$data['week_lunes']      	= $week_lunes;
+			$data['week_martes']      = $week_martes;
+			$data['week_miercoles']   = $week_miercoles;
+			$data['week_jueves']      = $week_jueves;
+			$data['week_viernes']     = $week_viernes;
+			$data['week_sabado']      = $week_sabado;
+			$data['week_domingo']     = $week_domingo;
+	    return($data);
+    }
 
 		//get earliest comision date 
 		date_default_timezone_set("America/Mexico_City");
@@ -97,52 +148,27 @@ class BackController extends Controller
     		$earliest = $comPatr->created_at;
     	}
     }
-
-    function getWeekInfo($refDate){
-    	$data = [];
-	   	//get week info for refDate
-	 	  $week_num = $refDate->format("W");
-	 	  $data['week_num'] = $week_num;
-	    //get month info for refDate
-	    $month_num = padLeft($refDate->month);
-	    $data['month_num'] = $month_num;
-	    //get year info for refDate
-	    $year_num = $refDate->format("Y");
-	    $data['year_num'] = $year_num;
-	    //get day number
-	    $day_num = $refDate->format("d");
-	    $data['day_num'] = $day_num;
-	    //get day of week number
-	    $day_of_week = date('w', $refDate->getTimestamp());
-	    $data['day_of_week'] = $day_of_week;
-	    //get date for start of refDate week
-	    $week_start = date('d-m-Y', strtotime('-'.$day_of_week.' days', $refDate->getTimestamp()));
-	    $data['week_start'] = $week_start;
-	    $week_lunes = date('Y-m-d', strtotime($week_start));
-	    $data['week_lunes'] = $week_lunes;
-	    $week_martes = date('Y-m-d', strtotime($week_lunes. ' + 1 days'));
-	    $data['week_martes'] = $week_martes;
-	    $week_miercoles = date('Y-m-d', strtotime($week_martes. ' + 1 days'));
-	    $data['week_miercoles'] = $week_miercoles;
-	    $week_jueves = date('Y-m-d', strtotime($week_miercoles. ' + 1 days'));
-	    $data['week_jueves'] = $week_jueves;
-	    $week_viernes = date('Y-m-d', strtotime($week_jueves. ' + 1 days'));
-	    $data['week_viernes'] = $week_viernes;
-	    $week_sabado = date('Y-m-d', strtotime($week_viernes. ' + 1 days'));
-	    $data['week_sabado'] = $week_sabado;
-	    $week_domingo = date('Y-m-d', strtotime($week_sabado. ' + 1 days'));
-	    $data['week_domingo'] = $week_domingo;
-	    return($data);
-    }
    	//get week num for the earliest comission
     $earliest_week_num = $earliest->weekOfYear;
+    //get the number of weeks from earliest to current
     $weeks_diff = $cur_week_num - $earliest_week_num;
-    $weeks_info = [];
-    for($i=0; $i< $weeks_diff; $i++){
-    	$weeks_info[$i] = getWeekInfo($earliest->addDays($i * 7));
+    //get week info for each week from earliest to current
+  // 	echo 'earliest: '.$earliest.'<br>';
+  // 	echo 'today: '.$today.'<br>';
+		// echo 'earliest_week_num: '.$earliest_week_num.'<br>';
+  // 	echo 'current_week_num: '.$cur_week_num.'<br>';
+		// echo 'total weeks: '.$weeks_diff.'<br>';
+		// echo 'getting weeks info.... <br>';
+		//array to hold weeks info
+    $weeks_info = array();
+    //add the first week (week of earliest)
+    array_push($weeks_info, getWeekInfo($earliest));
+    //add the rest of the weeks up until today
+    for($i=0; $i < $weeks_diff; $i++){
+    	$next_date = $earliest->addWeek();
+    	array_push($weeks_info, getWeekInfo($next_date));
     }
-
-
+		
 		return view('back.oficina_virtual',[
 			'cur_user' => $cur_user,
 			'active_page' => 'oficina',

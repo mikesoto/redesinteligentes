@@ -169,6 +169,14 @@ tr.listado-row.multiple{
 	background-color:rgba(0,0,0,0);
 }
 
+#filters-container{
+	margin-top:-10px;
+	margin-bottom:20px;
+}
+
+#notificaciones-panel{
+	margin-top:-10px;
+}
 
 /* =====================================================================
 ============================= RED MAP ==================================
