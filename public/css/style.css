@@ -110,6 +110,11 @@ tr.listado-row.multiple{
 	border:2px solid #D9534F;
 }
 
+tr.listado-row.multiple.5th-mult{
+	background-color:#ccc;
+	border:2px solid #4fc0d9;
+}
+
 .ghost{
 	color:#ccc;
 }

@@ -176,17 +176,51 @@ $(document).ready(function() {
 		  	//check if this is a multiple of 5
 		    if(n_count % 5 == 0){
 		    	mult_counter+=1;
-		    	//add classes to the label and downlines container for this user
+		    	//add classes to the label and downlines container for this user in Red Panel
 		      $("#label-"+u.id).addClass('multiple');
 		      $("#label-"+u.id).append('<sup> * '+mult_counter+'</sup>');
 		      $("#downlines-"+u.id).addClass('multiple');
+		      //add classes to the row container for this user in Lados Panel
 		      $("#lado-row-"+u.id).addClass('multiple');
 		      $("#lado-row-"+u.id).append('<sup> * '+mult_counter+'</sup>');
+		      //add classes to the row container for this user in Listados Panel
 		      $("#listado-row-"+u.id).addClass('multiple');
 		      $("#listado-row-"+u.id).append('<sup> * '+mult_counter+'</sup>');
 		      console.log(n_count+' '+u.user+' is multiple '+mult_counter+' ... adding to disabled uplines');
 		      disabled_uplines.push(u.id);
-		      //console.info(disabled_uplines);
+		      
+		      //check if is a 5th multiple
+		      if(mult_counter % 5 === 0){
+		      	//console.log('found a 5th multiple');
+		    		//is a 5th multiple, add 5th-mult class to the label in Red Panel
+		    		$("#label-"+u.id).addClass('5th-mult');
+		    		$("#label-"+u.id).css('border','2px solid #4fc0d9');
+		      	$("#label-"+u.id).css('background-color','#666');
+		    		//add 5th-mult class to the row in Lados Panel
+		      	$("#lado-row-"+u.id).addClass('5th-mult');
+		      	$("#lado-row-"+u.id).css('border','2px solid #4fc0d9');
+		      	$("#lado-row-"+u.id).css('background-color','#aaa');
+		      	//add 5th-mult class to the row in Listados Panel
+		      	$("#listado-row-"+u.id).addClass('5th-mult');
+		      	$("#listado-row-"+u.id).css('border','2px solid #4fc0d9');
+		      	$("#listado-row-"+u.id).css('background-color','#aaa');
+		    	}
+		    	//check if is a 6th multiple
+		      if(mult_counter % 6 === 0){
+		      	//console.log('found a 6th multiple');
+		    		//is a 6th multiple, add 6th-mult class to the label in Red Panel
+		    		$("#label-"+u.id).addClass('6th-mult');
+		    		$("#label-"+u.id).css('border','2px solid #4fc0d9');
+		      	$("#label-"+u.id).css('background-color','#666');
+		    		//add 6th-mult class to the row in Lados Panel
+		      	$("#lado-row-"+u.id).addClass('6th-mult');
+		      	$("#lado-row-"+u.id).css('border','2px solid #4fc0d9');
+		      	$("#lado-row-"+u.id).css('background-color','#aaa');
+		      	//add 6th-mult class to the row in Listados Panel
+		      	$("#listado-row-"+u.id).addClass('6th-mult');
+		      	$("#listado-row-"+u.id).css('border','2px solid #4fc0d9');
+		      	$("#listado-row-"+u.id).css('background-color','#aaa');
+		    	}
 		  	}else{
 		  		//console.log(n_count+' '+u.user);
 		  	}
