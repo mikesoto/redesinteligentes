@@ -3,15 +3,23 @@
     <h3 class="panel-title">Comissiones</h3>
   </div>
   <div class="panel-body">
-    <?php $periodo = 1;?>
+    <?php 
+      //start period
+      $periodo = 1;
+      $filter_period = false;
+      if(isset($_GET['p']) && is_numeric($_GET['p'])){
+        $filter_period = $_GET['p'];
+      }
+    ?>
     @foreach($weeks_info as $week)
-      <div class="col-sm-3 com-periodo-label">
+      <?php $filtered = ($filter_period > 0 && $periodo != $filter_period)? 'hidden' : ''; ?>
+      <div class="col-sm-3 com-periodo-label {{ $filtered }}">
         <h4>Periodo {{ $periodo }}</h4>
       </div>
-      <div class="col-sm-9">
+      <div class="col-sm-9 {{ $filtered }}">
         Semana {{$week['week_num']}} de {{$week['year_num']}} (<strong>{{date_create($week['week_lunes'])->format("d/m/Y")}} - {{date_create($week['week_domingo'])->format("d/m/Y")}}</strong>)
       </div>
-      <table class="table table-hover" style="border-bottom:2px solid #ccc;margin-bottom:50px;">
+      <table class="table table-hover {{ $filtered }}" style="border-bottom:2px solid #ccc;margin-bottom:50px;">
           <thead>
             <tr>
               <th>Fecha</th>

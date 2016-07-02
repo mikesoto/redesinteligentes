@@ -47,8 +47,15 @@
         <div id="panel-de-control" class="panel panel-{{$filt_color}}">
           <div class="panel-heading">
             <?php 
-              if(isset($_GET['u'])){
-                echo '<h3 class="panel-title text-center">Filtrado por usuario '.$cur_user->id.' - '.$cur_user->nombre.' '.$cur_user->apellido_paterno.' '.$cur_user->apellido_materno.'</h3>';
+              if( isset($_GET['u']) || isset($_GET['p']) ){
+                $filt_content = '';
+                if(isset($_GET['u'])){
+                  $filt_content .= 'Filtrado por usuario '.$cur_user->id.' - '.$cur_user->nombre.' '.$cur_user->apellido_paterno.' '.$cur_user->apellido_materno.' ';
+                }
+                if(isset($_GET['p'])){
+                  $filt_content .= '&nbsp; | &nbsp;Periodo - '.$_GET['p'];
+                }
+                echo '<h3 class="panel-title text-center">'.$filt_content.'</h3>';
               }else{
                 echo '<h3 class="panel-title">Filtrar por usuario y/o Periodo</h3>';
               }
