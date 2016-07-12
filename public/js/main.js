@@ -185,10 +185,10 @@ $(document).ready(function() {
 		  //compare stored multiples with found multiples and send update request if not identical
 		  multiples_found_str = JSON.stringify(multiples_arr);
 		 	multiples_stored_str = JSON.stringify(cur_user_mults);
-		  //console.log(multiples_found_str);
-			//console.log(multiples_stored_str);
+		  console.log(multiples_found_str);
+			console.log(multiples_stored_str);
 		  if(multiples_found_str  !=  multiples_stored_str){
-		  	//console.log('arrays are not equal, sending update request');
+		  	console.log('arrays are not equal, sending update request');
 			  var csrfToken = $('meta[name="csrf-token"]').attr('content');
 			  $.ajaxSetup({
 		      headers: {
