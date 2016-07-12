@@ -3,6 +3,7 @@
   $session_usr = Auth::user();
 ?>
 @section('content')
+<meta name="csrf-token" content="{{ csrf_token() }}">
 <div class="container">
   <!-- WELCOME HEADER -->
   @if($session_usr->id == 1)

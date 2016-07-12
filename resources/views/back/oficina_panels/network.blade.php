@@ -139,6 +139,23 @@
 ?>
 
 <script type="text/javascript">
+  var cur_user = {{ $cur_user->id }};
+  var cur_mults = [
+    <?php 
+      $cur_mults_count = count($mults_data);
+      $counter = 1;
+      foreach($mults_data as $user_obj){
+        echo '{
+          "user_id" : '.$user_obj->user_id.',
+          "multiples" : ['.implode(',',$user_obj->multiples).']
+        }';
+        if($counter < $cur_mults_count){
+          echo ',';
+        }
+      }
+    ?>
+  ];
+
   //array of all users sorted by id
   var users_sorted = [
   <?php 
