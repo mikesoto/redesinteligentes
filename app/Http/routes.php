@@ -39,4 +39,4 @@ Route::post('/office/create/user', 'BackController@createUser');
 Route::get('/office/api/user/{id}', 'BackController@getUser');
 Route::get('/office/api/userByEmail/{email}', 'BackController@getUserByEmail');
 Route::get('/office/api/getdownlines/{user_id}', 'BackController@getUserDownlines');
-Route::post('/office/api/mult_json_sync/', 'BackController@multJsonSync');
+Route::post('/office/api/mult_json_sync', 'BackController@multJsonSync');

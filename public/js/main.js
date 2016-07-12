@@ -196,8 +196,8 @@ $(document).ready(function() {
 		      }
 				});
 			  $.ajax({
-				  method: "post",
-				  url: '/office/api/mult_json_sync/',
+				  method: "POST",
+				  url: '/office/api/mult_json_sync',
 				  data: { user_data : { "user_id" : root_user, "multiples" : multiples_arr} }
 				})
 			  .done(function( sync_result ) {
