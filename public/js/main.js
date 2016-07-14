@@ -66,7 +66,6 @@ $(document).ready(function() {
 		});
 
 		// ============================ COUNT USER MULTIPLES ===========================	  
-
 	  function mark_multiples(u_id,m_count){
 	  	//add classes to the label and downlines container for this user in Red Panel
       $("#label-"+u_id).addClass('multiple');
@@ -113,157 +112,30 @@ $(document).ready(function() {
     	}
 	  }
 
-	  function separate_mults(u_id,c_mults){
-	  	var oth_mults = [];
-		  var usr_mults = [];
-	  	//seperates current user's mults from other user's mults
-		  var mults_len = c_mults.length;
-	    for(i = 0; i < mults_len; i++){ 
-	    	if(typeof(c_mults[i]) == 'object'){
-		    	this_mults_len = c_mults[i].multiples.length;     	
-		      for(n = 0; n < this_mults_len; n++){
-		      	if(c_mults[i].user_id != u_id){
-		      		oth_mults.push(c_mults[i].multiples[n]);
-		      	}else{
-		      		usr_mults.push(c_mults[i].multiples[n]);
-		      	}
-		      }
-		    }
-	    }
-	    return [oth_mults,usr_mults];
-	  }
-
-	  
-	  all_user_mults = [] // will store all user's mults to keep from assigning them down the line
-	  
-	  function update_multiples(root_user, users_list){
-		  //seperate current user's mults from other user's mults
-		  sep_arrs = separate_mults(root_user,cur_mults);
-		  var cur_user_mults = sep_arrs[1];
-		  var others_mults = sep_arrs[0];
-	    //loop through ordered users list to find mults
-		 	var users_length = users_list.length;
-		 	var mults_len = cur_mults.length;
-		 	var n_count = 1;//the main counter which is checked for multiples of five
-		 	var multiples_arr = [];//array to hold all found multiples for this user
-		 	var disabled_uplines = [];//array to hold id's of disabled id's
-		 	var mult_counter = 0;//counts the number of multiples found
-		  for(i=0; i < users_length; i++){
-		  	//check if the user's upline is listed in disabled uplines (previously found multiples or their children)
-		  	if(disabled_uplines.indexOf(users_list[i].upline) > -1){
-		  		//console.warn('user '+users_list[i].id+'\'s upline in disabled uplines, adding their id to disabled uplines and skipping this user');
-		  		disabled_uplines.push(users_list[i].id);
-		  	}else{
-		  		//check if this user is already someone else's multiple
-		  		//console.warn(others_mults);
-			  	if(all_user_mults.indexOf(users_list[i].id) > -1){
-			  		//console.log(users_list[i].id+' is already someone\'s multiple, skipping this count');
-			  	}else{
-				  	//check if this is a multiple of 5
-				    if(n_count % 5 == 0){
-				    	//found a multiple (not disabled or belonging to anyone else)
-				    	mult_counter+=1;
-				    	//console.log(n_count+' '+users_list[i].user+' is multiple '+mult_counter+' ... adding to disabled uplines');
-				      multiples_arr.push(users_list[i].id);
-				      disabled_uplines.push(users_list[i].id);
-				      all_user_mults.push(users_list[i].id);
-				    	//only mark multiples for logged in user
-				    	if(root_user == cur_user){
-					    	mark_multiples(users_list[i].id,mult_counter);
-					    }
-				  	}else{
-				  		//is a normal n_count user
-				  		//console.log(n_count+' '+users_list[i].user);
-				  	}
-				  	//always incriment the n_count as long as not disabled or belonging to anyone else
-						n_count++;
-					}
-				}	
-		  }
-		  //console.log('found multiples for user: '+root_user);
-		  //console.log(multiples_arr);
-		  //compare stored multiples with found multiples and send update request if not identical
-		  multiples_found_str = JSON.stringify(multiples_arr);
-		 	multiples_stored_str = JSON.stringify(cur_user_mults);
-		 //  console.log(multiples_found_str);
-			// console.log(multiples_stored_str);
-		  if(multiples_found_str  !=  multiples_stored_str){
-		  	// console.log('arrays are not equal, sending update request');
-			  var csrfToken = $('meta[name="csrf-token"]').attr('content');
-			  $.ajaxSetup({
-		      headers: {
-		        'X-CSRF-TOKEN': csrfToken
-		      }
-				});
-			  $.ajax({
-				  method: "POST",
-				  url: '/office/api/mult_json_sync',
-				  data: { user_data : { "user_id" : root_user, "multiples" : multiples_arr} }
-				})
-			  .done(function( sync_result ) {
-			  	//console.log(sync_result);
-			  });
-			  
-			}else{
-				//console.log('arrays are same, not sending update request for this user');
-			}
-			//done with this iteration
-			//console.log('============================================================');
-			return {
-				'user_id' : root_user,
-				'others_mults' : others_mults,
-				'cur_user_mults' : cur_user_mults,
-				'found_user_mults' : multiples_arr,
-				'mult_counter' : mult_counter
-			}
-		}
-
-		//array to hold response multiples data
-		mults_data = [];
-		//create a copy of users_sorted so as not to change the original list while looping
-		users_sorted_copy = users_sorted.slice();
-		
-		//run through the entire list counting multiples for each user and sending sync if necessary
-		//run the multiples count for the current user first (logged in user)
-		//only generate the multiples live for the admin user
-		if(cur_user == 1){
-			mults_data.push(update_multiples(cur_user, users_sorted_copy));
-		  //update the counts area with the total multiples of currently logged in user
-		  $(".side-counts h4").append('| <label class="label label-danger">Multiples: '+mults_data[0].mult_counter+'</label> ');
-		
-		  if($.getUrlVar("calc_multiples") != null) {
-				//loop through the copied array, shortening it each iteration
-				copied_len = users_sorted_copy.length;
-				for(c = 0; c < copied_len; c++){
-					//get the next user from the list (removes it from the array also)
-					shifted_user = users_sorted_copy.shift();//remove the first element from the copied list
-					console.log('runing update_multiples for user '+shifted_user.id);
-					//run the loop again for the next user
-					mults_data.push(update_multiples(shifted_user.id, users_sorted_copy));
-				}
-			}
-		}else{
-			m_count = 0;
-			//is not admin so pull their multiples from the json data
-			for(i=0; i< cur_mults.length; i++){
-				if(cur_mults[i].user_id == cur_user){
-					
-					for(n=0; n < cur_mults[i].multiples.length; n++){
-						//check if the user exists in the cur_user's tree
-						if($("#label-"+cur_mults[i].multiples[n]).length){
-							m_count++;
-							mark_multiples(cur_mults[i].multiples[n],m_count);
-						}
+		m_count = 0;
+		//pull their multiples data from the json file ->  array (cur_mults)
+		for(i=0; i< cur_mults.length; i++){
+			if(cur_mults[i].user_id == cur_user){
+				for(n=0; n < cur_mults[i].multiples.length; n++){
+					//check if the user exists in the cur_user's tree
+					if($("#label-"+cur_mults[i].multiples[n]).length){
+						m_count++;
+						mark_multiples(cur_mults[i].multiples[n],m_count);
 					}
 				}
 			}
-			//update the counts area with the total multiples of currently logged in user
-		  $(".side-counts h4").append('| <label class="label label-danger">Multiples: '+m_count+'</label> ');
 		}
-
-		
-		
+		//update the counts area with the total multiples of currently logged in user
+	  $(".side-counts h4").append('| <label class="label label-danger">Multiples: '+m_count+'</label> ');
 	}
+
+
+
+
+
+
+
+
 
 	//check if the create user form is present
 	if($("#create-user-form").length){

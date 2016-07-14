@@ -51,10 +51,10 @@ class BackController extends Controller
   }
 
   public function oficinaVirtual(Request $request){
-  	$usr = User::find(6);
-  	$ch_pwd = bcrypt('redes123');
-  	$usr->password = $ch_pwd;
-  	$usr->save();
+  	// $usr = User::find(6);
+  	// $ch_pwd = bcrypt('redes123');
+  	// $usr->password = $ch_pwd;
+  	// $usr->save();
 
   	//check if GET request filter exists for user
   	$req_usr = $request->input('u', false);
@@ -379,7 +379,7 @@ class BackController extends Controller
     if(isset($clean_cell) && is_numeric($clean_cell)){
     	\Session::push('alert-success', 'Datos de ingreso enviados con éxito a '. $clean_cell.' con sus datos de ingreso.');
     }
-    return redirect('/oficina-virtual?calc_multiples=1');//var is to recalculate the multiples
+    return redirect('/office/api/generateMultsList');//recalculate the multiples and overwrite the json file
 	}
 
 
@@ -447,54 +447,101 @@ class BackController extends Controller
 		return $downlines;
 	}
 
+	//function to compare the ids 
+  function compare($a, $b){
+    if($a->id < $b->id){
+      return -1;
+    }
+    if($a->id > $b->id){
+      return 1;
+    }
+  }
 
-	public function multJsonSync(Request $request){
+	public function generateMultsList(Request $request){
 		//only the admin user can update persistant multiples data 
 		if(Auth::user()->id == 1){
-			if($request->method() == 'POST'){
-				//read input mults
-				$req_data = $request->input('user_data');
-				//get the contents of the multiples json
-				$string_json = file_get_contents(storage_path()."/app/multiples.json");
-				$stored_data = json_decode($string_json);
-				echo '{';
-				//find the id of the user to sync in the stored data and update the data
-				$updated_data = [];
-				$found = false;
-				foreach($stored_data as $user_obj){
-					//found the requested user in the current stored data
-					if($user_obj->user_id == $req_data['user_id']){
-						//update the users multiples with those in request
-						$user_obj->multiples = $req_data['multiples'];
-						$found = true;
-						echo '
-							"new" : false,';
-					}
-					//all other objects including the updated object are added to updated_data
-					array_push($updated_data, $user_obj);
-				}
-				//if the user is new to the mults json file, create a new entry
-				if(!$found){
-					$new_user_data = (object) array(
-						"user_id" => $req_data['user_id'],
-						"multiples" => $req_data['multiples']
-					);
-					array_push($updated_data, $new_user_data);
-					echo '
-							"new" : true,';
-				}
-				//update the json file with the updated_data array converted to json
-				file_put_contents(storage_path()."/app/multiples.json", json_encode($updated_data));
-
-				echo '
-							"request" : '.json_encode($req_data).',
-							"response" : "OK"
-				}';
+			//holds the objects of user ids and their mults (will be converted to json and stored in file)
+			$cur_mults = [];
+		  // will hold all multiple's id's to keep from assigning them down the line
+  		$all_user_mults = []; 
+			//get ordered list of all users
+	  	$users_arr = User::orderBy('id', 'asc')->get();
+		  //get count of original list
+		  $list_length = count($users_arr);
+			
+			//loop through ordered users list to find mults
+			foreach($users_arr as $root_user){
+		   	//get the tree from the root user's position
+		  	$tree = [];
+		  	$tree[0] = [];
+		  	$users = User::where('upline', '=', $root_user->id)->get();
+		  	foreach($users as $socio){
+		  		array_push($tree[0],$socio);
+		  	}
+		  	$i = -1;
+		  	while(count($tree[$i+1])){
+		  		$tree[$i+2] = self::getNextLevel($i+1,$tree[$i+1]);
+		  		$i++;
+		  	}
+		  	//sort the tree
+			  $sorted_tree = [];
+			  foreach($tree as $lvl_group){
+			    foreach($lvl_group as $soc){
+			      array_push($sorted_tree,$soc);
+			    }
+			  }  
+			  usort($sorted_tree, array($this, "compare"));   
+  			//the main counter which is checked for multiples of five
+			 	$n_count = 1;
+			 	//array to hold all found multiples for this user
+			 	$multiples_arr = [];
+			 	//array to hold id's of disabled id's
+			 	$disabled_uplines = [];
+			 	//counts the number of multiples found
+			 	$mult_counter = 0;
+			  foreach($sorted_tree as $tree_usr){
+			  	//check if the user's upline is listed in disabled uplines (previously found multiples or their children)
+			  	if( in_array($tree_usr->upline, $disabled_uplines) ){
+			  		//upline in disabled uplines, adding their id to disabled uplines and skipping this user
+			  		array_push($disabled_uplines, $tree_usr->id);
+			  	}else{
+			  		//check if this user is already someone else's multiple
+				  	if(in_array($tree_usr->id, $all_user_mults) ){
+				  		//user is already someone's multiple, skipping this count
+				  	}else{
+					  	//check if this is a multiple of 5
+					    if($n_count % 5 == 0){
+					    	//found a multiple (not disabled or belonging to anyone else
+					    	$mult_counter++;
+					    	//user is a multiple, adding to disabled uplines');
+					      array_push($multiples_arr, $tree_usr->id);
+					      array_push($disabled_uplines, $tree_usr->id);
+					      array_push($all_user_mults, $tree_usr->id);
+					  	}
+					  	//incriment the n_count so long as not disabled or belonging to anyone else
+							$n_count++;
+						}
+					}	
+			  }
+			  //add the new object to the cur_mults array
+				$new_user_obj = (object) array(
+					"user_id" => $root_user->id,
+					"multiples" => $multiples_arr
+				);
+				array_push($cur_mults, $new_user_obj);
 			}
+
+			//update the json file with the cur_mults array converted to json
+			file_put_contents(storage_path()."/app/multiples.json", json_encode($cur_mults));
+
+			//add succes message
+			\Session::push('alert-success', 'Múltiplos de red creados y guardados con éxito');
+			return redirect('/oficina-virtual');
+
 		}else{
 			echo '{
-				"response" : "not authorized"
-			}';
+							"response" : "not authorized"
+						}';
 		}
 	}
 		
