@@ -505,22 +505,26 @@ class BackController extends Controller
 			  		//upline in disabled uplines, adding their id to disabled uplines and skipping this user
 			  		array_push($disabled_uplines, $tree_usr->id);
 			  	}else{
-			  		//check if this user is already someone else's multiple
-				  	if(in_array($tree_usr->id, $all_user_mults) ){
-				  		//user is already someone's multiple, skipping this count
-				  	}else{
-					  	//check if this is a multiple of 5
-					    if($n_count % 5 == 0){
-					    	//found a multiple (not disabled or belonging to anyone else
+			  		$count_this = true;//by default
+				  	//check if this is a multiple of 5
+				    if($n_count % 5 == 0){
+				    	//check if this user is already someone else's multiple
+				  		if( !in_array($tree_usr->id, $all_user_mults) ){
+					    	//found a multiple (not disabled or belonging to anyone else)
 					    	$mult_counter++;
 					    	//user is a multiple, adding to disabled uplines');
 					      array_push($multiples_arr, $tree_usr->id);
 					      array_push($disabled_uplines, $tree_usr->id);
 					      array_push($all_user_mults, $tree_usr->id);
-					  	}
+					    }else{
+					    	$count_this = false;
+					    }
+				  	}
+				  	if($count_this){
 					  	//incriment the n_count so long as not disabled or belonging to anyone else
 							$n_count++;
 						}
+						
 					}	
 			  }
 			  //add the new object to the cur_mults array
@@ -536,12 +540,12 @@ class BackController extends Controller
 
 			//add succes message
 			\Session::push('alert-success', 'Múltiplos de red creados y guardados con éxito');
+			
 			return redirect('/oficina-virtual');
 
 		}else{
-			echo '{
-							"response" : "not authorized"
-						}';
+			echo 'not authorized... redirecting';
+			return redirect('/oficina-virtual');
 		}
 	}
 		
