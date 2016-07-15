@@ -104,6 +104,9 @@ class BackController extends Controller
 		$comsMult = $comsMult_query->get();
 		//get the name of the new users for each patrocinio
 		foreach($comsPatr as $comPatr){
+			$recUser = User::find($comPatr->user_id);
+			$comPatr->rec_user_name = $recUser->nombre.' '.$recUser->apellido_paterno;
+
 			$newUser = User::find($comPatr->new_user_id);
 			$comPatr->new_user_name = $newUser->nombre.' '.$newUser->apellido_paterno;
 
@@ -116,6 +119,9 @@ class BackController extends Controller
 
 		//get the name of the new users for each multiple
 		foreach($comsMult as $comMult){
+			$recUser = User::find($comMult->user_id);
+			$comMult->rec_user_name = $recUser->nombre.' '.$recUser->apellido_paterno;
+
 			$newUser = User::find($comMult->new_user_id);
 			$comMult->new_user_name = $newUser->nombre.' '.$newUser->apellido_paterno;
 

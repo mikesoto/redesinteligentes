@@ -43,12 +43,13 @@
         <br>
         <br>
         <div id="week-{{$week['week_num']}}" class="collapse">
-          <table class="table table-hover {{ $filtered }}" style="border-bottom:2px solid #ccc;margin-bottom:50px;">
+          <table class="table table-hover {{ $filtered }}" style="border-bottom:2px solid #ccc;margin-bottom:50px;font-size:12px;">
             <thead>
               <tr>
                 <th>Fecha</th>
                 <th>Tipo</th>
                 <th>Monto</th>
+                <th>Receptor</th>
                 <th>Nuevo Asociado</th>
                 <th>Patrocinador</th>
                 <th>Upline</th>
@@ -60,6 +61,7 @@
                   <td>{{ date('d/m/Y', strtotime($comPatr->created_at)) }}</td>
                   <td><label class="label label-primary">{{ $comPatr->type }}</label></td>
                   <td>${{ $comPatr->amount }}</td>
+                  <td>{{ $comPatr->rec_user_name }} ({{ $comPatr->user_id }})</td>
                   <td>{{ $comPatr->new_user_name }} ({{ $comPatr->new_user_id }})</td>
                   <td>{{ $comPatr->pat_user_name }} ({{ $comPatr->patroc_id }})</td>
                   <td>{{ $comPatr->upline_user_name }} ({{ $comPatr->upline_id }})</td>
@@ -71,6 +73,7 @@
                   <td>{{ date('d/m/Y', strtotime($comMult->created_at)) }}</td>
                   <td><label class="label {{$color_label}}">{{ $comMult->type }}</label></td>
                   <td>${{ $comMult->amount }}</td>
+                  <td>{{ $comMult->rec_user_name }} ({{ $comMult->user_id }})</td>
                   <td>{{ $comMult->new_user_name }} ({{ $comMult->new_user_id }})</td>
                   <td>{{ $comMult->pat_user_name }} ({{ $comMult->patroc_id }})</td>
                   <td>{{ $comMult->upline_user_name }} ({{ $comMult->upline_id }})</td>
