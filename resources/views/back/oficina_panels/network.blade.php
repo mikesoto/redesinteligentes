@@ -289,10 +289,12 @@
           global $left_count;
           global $right_count;
           $total_count = $left_count+$right_count;
+          $patr_count = count($comsPatr);
           echo '<h4>
                   <label class="label label-success">Izquierdo: '.$left_count.'</label> | 
                   <label class="label label-primary">Derecho: '.$right_count.'</label> | 
-                  <label class="label label-default">Total: '.$total_count.'</label> 
+                  <label class="label label-default">Total: '.$total_count.'</label> |
+                  <label class="label label-info">Patrocinios: '.$patr_count.'</label> 
                 </h4>';
                 // the multiples total count is appended to the h4 by javascript
         ?>
