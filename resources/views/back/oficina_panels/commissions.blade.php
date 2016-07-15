@@ -31,13 +31,13 @@
         }
       ?>
       @if(count($week_patrocinios))
-        <div class="col-sm-3 com-periodo-label {{ $filtered }}">
+        <div class="col-sm-2 com-periodo-label {{ $filtered }}">
           <h4>Periodo {{ $periodo }}</h4>
         </div>
-        <div class="col-sm-4 {{ $filtered }}">
+        <div class="col-sm-6 {{ $filtered }}">
           Semana {{$week['week_num']}} de {{$week['year_num']}} (<strong>{{date_create($week['week_lunes'])->format("d/m/Y")}} - {{date_create($week['week_domingo'])->format("d/m/Y")}}</strong>)
         </div>
-        <div class="col-sm-5">
+        <div class="col-sm-4">
           <button type="button" class="btn btn-info btn-xs show-period-btn" data-toggle="collapse" data-target="#week-{{$week['week_num']}}">Ver Tabla de Periodo</button>
         </div>
         <br>
