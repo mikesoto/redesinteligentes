@@ -93,12 +93,15 @@ class BackController extends Controller
   	//get all comisiones of type patrocinio
   	$patrocinios = User::where('patrocinador', '=', $cur_user->id)->get();
 		$comsPatr_query = Comision::where('type','=','patrocinio');
+		$comsMult_query = Comision::where('type','=','multiplo');
 		//only the main admin account can view all patrocinios
 		if($cur_user->id > 1){
 			//normal users can only view their own patrocinios
 			$comsPatr_query->where('user_id','=',$cur_user->id);
+			$comsMult_query->where('user_id','=',$cur_user->id);
 		}
 		$comsPatr = $comsPatr_query->get();
+		$comsMult = $comsMult_query->get();
 		//get the name of the new users for each patrocinio
 		foreach($comsPatr as $comPatr){
 			$newUser = User::find($comPatr->new_user_id);
@@ -110,11 +113,23 @@ class BackController extends Controller
 			$uplineUser = User::find($comPatr->patroc_id);
 			$comPatr->upline_user_name = $uplineUser->nombre.' '.$uplineUser->apellido_paterno;
 		}
+
+		//get the name of the new users for each multiple
+		foreach($comsMult as $comMult){
+			$newUser = User::find($comMult->new_user_id);
+			$comMult->new_user_name = $newUser->nombre.' '.$newUser->apellido_paterno;
+
+			$patUser = User::find($comMult->patroc_id);
+			$comMult->pat_user_name = $patUser->nombre.' '.$patUser->apellido_paterno;
+
+			$uplineUser = User::find($comMult->patroc_id);
+			$comMult->upline_user_name = $uplineUser->nombre.' '.$uplineUser->apellido_paterno;
+		}
 		
 		//generate ganancias value
 		$ganancias = 0.00;
 		if($cur_user->id == 1){
-			//earnings for the company come from the users investment
+			//earnings for the company come from the users investment's and comissions for company
 			foreach($comsPatr as $comPatr){
 				$ganancias += 1150;
 			}
@@ -123,6 +138,12 @@ class BackController extends Controller
 			foreach($comsPatr as $comPatr){
 				if($comPatr->user_id == $cur_user->id){
 					$ganancias += $comPatr->amount;
+				}
+			}
+			//earnings for users are also from the multiples amount
+			foreach($comsMult as $comMult){
+				if($comMult->user_id == $cur_user->id){
+					$ganancias += $comMult->amount;
 				}
 			}
 		}
@@ -209,6 +230,7 @@ class BackController extends Controller
 			'downlines' => $downlines,
 			'patrocinios' => $patrocinios,
 			'comsPatr' => $comsPatr,
+			'comsMult' => $comsMult,
 			'ganancias' => $ganancias,
 			'weeks_info' => $weeks_info,
 			'mults_data' => $mults_data,
@@ -548,6 +570,43 @@ class BackController extends Controller
 
 			//update the json file with the cur_mults array converted to json
 			file_put_contents(storage_path()."/app/multiples.json", json_encode($cur_mults));
+
+
+			//store any new multiples in comissiones table 
+			foreach($cur_mults as $mult){
+				$m_count = 0;
+				foreach($mult->multiples as $m){
+					$m_count++;
+					if($m_count % 5 == 0 || $m_count % 6 == 0){
+						$com_amt = 0.00;
+						//TODO find the asignado for this user and add the comission there if not already created
+					}else{
+						$com_amt = 250.00;
+					}
+					//check if the comission already exists
+					$comMult_res = Comision::where('type','=','multiplo')
+																	 ->where('user_id','=',$mult->user_id)
+																	 ->where('new_user_id', '=', $m)
+																	 ->first();
+					if($comMult_res){
+						//comission multiplo already exists, skip this multiple
+					}else{
+						//comission multiplo does not exist, add to the database
+						$m_user = User::find($m);
+						$new_mult_com = Comision::create([
+							'user_id' => $mult->user_id,
+							'new_user_id' => $m,
+							'upline_id' => $m_user->upline,
+							'patroc_id' => $m_user->patrocinador,
+							'asignado_id' => 0,
+							'type' => 'multiplo',
+							'amount' => $com_amt,
+							'date_payed' => '0000-00-00',
+							'created_at' => $m_user->fecha_ingreso
+						]);
+					}
+				}			
+			}
 
 			//add succes message
 			\Session::push('alert-success', 'Múltiplos de red creados y guardados con éxito');

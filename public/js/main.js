@@ -52,17 +52,31 @@ $(document).ready(function() {
 			for(i=0; i < office_panels.length; i++){
 				$("#office-panel-"+office_panels[i]).addClass('hidden');
 			}
+			//close the notif panel automatically
+			$("#close-notif-btn").trigger('click');
 			//show this panel
 			var panelName = $(this).attr('data-panelName');
 			if(panelName == 'red'){
-				//close the notif panel automatically
-				$("#close-notif-btn").trigger('click');
 				//show center map button
   			$("#red-map-controls").removeClass('hidden');
 				//center the map for them once the map is loaded
 				setTimeout(function(){$("#map-scrollbutton").trigger('click');}, 100);
 			}
 			$("#office-panel-"+panelName).removeClass('hidden');
+		});
+
+		//=============== show period buttons toggle ==================================
+		$('.show-period-btn').on('click', function(){
+				var cont_str = $(this).html();
+				if(cont_str == 'Ver Tabla de Periodo'){
+					$(this).html('Esconder Tabla de Periodo');
+					$(this).removeClass('btn-info');
+					$(this).addClass('btn-warning');
+				}else{
+					$(this).html('Ver Tabla de Periodo');
+					$(this).removeClass('btn-warning');
+					$(this).addClass('btn-info');
+				}
 		});
 
 		// ============================ COUNT USER MULTIPLES ===========================	  
