@@ -99,6 +99,17 @@ class BackController extends Controller
 			$comsPatr_query->where('user_id','=',$cur_user->id);
 		}
 		$comsPatr = $comsPatr_query->get();
+		//get the name of the new users for each patrocinio
+		foreach($comsPatr as $comPatr){
+			$newUser = User::find($comPatr->new_user_id);
+			$comPatr->new_user_name = $newUser->nombre.' '.$newUser->apellido_paterno;
+
+			$patUser = User::find($comPatr->patroc_id);
+			$comPatr->pat_user_name = $patUser->nombre.' '.$patUser->apellido_paterno;
+
+			$uplineUser = User::find($comPatr->patroc_id);
+			$comPatr->upline_user_name = $uplineUser->nombre.' '.$uplineUser->apellido_paterno;
+		}
 		
 		//generate ganancias value
 		$ganancias = 0.00;
