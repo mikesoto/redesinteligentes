@@ -8,6 +8,7 @@
               <tr>
                 <th>Downlines</th>
                 <th>Patrocinios</th>
+                <th>Multiplos</th>
                 <th>Ganancias</th>
                 <th>Status</th>
               </tr>
@@ -16,7 +17,8 @@
               <tr>
                 <td>{{ count($downlines) }}</td>
                 <td>{{ count($comsPatr)}}</td>
-                <td>${{ number_format($ganancias) }}</td>
+                <td id="dash-mult-count"></td>
+                <td>$<span id="dash-comissions-total">{{ number_format($ganancias) }}</span></td>
                 <td>Bronce</td>
               </tr>
             </tbody>

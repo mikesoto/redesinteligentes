@@ -81,6 +81,7 @@ $(document).ready(function() {
 
 		// ============================ COUNT USER MULTIPLES ===========================	  
 	  function mark_multiples(u_id,m_count){
+	  	var earn = true;
 	  	//add classes to the label and downlines container for this user in Red Panel
       $("#label-"+u_id).addClass('multiple');
       $("#label-"+u_id).append('<sup> * '+m_count+'</sup>');
@@ -94,6 +95,7 @@ $(document).ready(function() {
       
       //check if is a 5th multiple
       if(m_count % 5 === 0){
+      	earn = false;
       	//console.log('found a 5th multiple');
     		//is a 5th multiple, add 5th-mult class to the label in Red Panel
     		$("#label-"+u_id).addClass('5th-mult');
@@ -110,6 +112,7 @@ $(document).ready(function() {
     	}
     	//check if is a 6th multiple
       if(m_count % 6 === 0){
+      	earn = false;
       	//console.log('found a 6th multiple');
     		//is a 6th multiple, add 6th-mult class to the label in Red Panel
     		$("#label-"+u_id).addClass('6th-mult');
@@ -124,9 +127,13 @@ $(document).ready(function() {
       	$("#listado-row-"+u_id).css('border','2px solid #4fc0d9');
       	$("#listado-row-"+u_id).css('background-color','#aaa');
     	}
+    	if(earn){
+    		mults_earnings += 250.00;
+    	}
 	  }
 
 		m_count = 0;
+		mults_earnings = 0.00;
 		//pull their multiples data from the json file ->  array (cur_mults)
 		for(i=0; i< cur_mults.length; i++){
 			if(cur_mults[i].user_id == cur_user){
@@ -141,6 +148,13 @@ $(document).ready(function() {
 		}
 		//update the counts area with the total multiples of currently logged in user
 	  $(".side-counts h4").append('| <label class="label label-danger">Multiples: '+m_count+'</label> ');
+		//update the dashboard with the total multiples count
+		$("#dash-mult-count").html(m_count);
+		//add the earnings from multiples to the ganancias total
+		var cur_earnings = parseFloat($("#dash-comissions-total").html().replace(',',''));
+		var final_earnings = cur_earnings + mults_earnings;
+		//update the final earnings ammount
+		$("#dash-comissions-total").html(final_earnings.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
 	}
 
 
