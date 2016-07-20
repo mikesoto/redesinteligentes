@@ -31,13 +31,34 @@
         }
       ?>
       @if(count($week_patrocinios))
-        <div class="col-sm-2 com-periodo-label {{ $filtered }}">
-          <h4>Periodo {{ $periodo }}</h4>
+        <?php 
+          $trans_months = array(
+            'January' => 'enero',
+            'February' => 'febrero',
+            'March' => 'marzo',
+            'April' => 'abril',
+            'May' => 'mayo',
+            'June' => 'junio',
+            'July' => 'julio',
+            'August' => 'agosto',
+            'September' => 'septiembre',
+            'October' => 'octubre',
+            'November' => 'noviembre',
+            'December' => 'diciembre' 
+          );
+        ?>
+        <div class="col-sm-1 com-periodo-label {{ $filtered }}">
+          <h4>Periodo <!-- {{ $periodo }} --></h4>
         </div>
-        <div class="col-sm-6 {{ $filtered }}">
-          Semana {{$week['week_num']}} de {{$week['year_num']}} (<strong>{{date_create($week['week_lunes'])->format("d/m/Y")}} - {{date_create($week['week_domingo'])->format("d/m/Y")}}</strong>)
+        <div class="col-sm-4 {{ $filtered }}">
+          <!-- Semana {{$week['week_num']}} de {{$week['year_num']}} -->
+          <h4 style="line-height:0px;">
+            <a data-toggle="collapse" data-target="#week-{{$week['week_num']}}">
+              {{ date_create($week['week_lunes'])->format("d") }} de {{ $trans_months[date_create($week['week_lunes'])->format("F")] }} al {{ date_create($week['week_domingo'])->format("d") }} de {{ $trans_months[date_create($week['week_domingo'])->format("F")] }} {{ date_create($week['week_domingo'])->format("Y") }}
+            </a>
+          </h4>
         </div>
-        <div class="col-sm-4">
+        <div class="col-sm-7">
           <button type="button" class="btn btn-info btn-xs show-period-btn" data-toggle="collapse" data-target="#week-{{$week['week_num']}}">Ver Tabla de Periodo</button>
         </div>
         <br>
