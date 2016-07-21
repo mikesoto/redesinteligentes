@@ -65,20 +65,6 @@ $(document).ready(function() {
 			$("#office-panel-"+panelName).removeClass('hidden');
 		});
 
-		//=============== show period buttons toggle ==================================
-		$('.show-period-btn').on('click', function(){
-				var cont_str = $(this).html();
-				if(cont_str == 'Ver Tabla de Periodo'){
-					$(this).html('Esconder Tabla de Periodo');
-					$(this).removeClass('btn-info');
-					$(this).addClass('btn-warning');
-				}else{
-					$(this).html('Ver Tabla de Periodo');
-					$(this).removeClass('btn-warning');
-					$(this).addClass('btn-info');
-				}
-		});
-
 		// ============================ COUNT USER MULTIPLES ===========================	  
 	  function mark_multiples(u_id,m_count){
 	  	var earn = true;
