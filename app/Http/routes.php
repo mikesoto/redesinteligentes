@@ -40,3 +40,4 @@ Route::get('/office/api/user/{id}', 'BackController@getUser');
 Route::get('/office/api/userByEmail/{email}', 'BackController@getUserByEmail');
 Route::get('/office/api/getdownlines/{user_id}', 'BackController@getUserDownlines');
 Route::get('/office/api/generateMultsList', 'BackController@generateMultsList');
+Route::get('/office/api/generateBono20List', 'BackController@generateBono20List');

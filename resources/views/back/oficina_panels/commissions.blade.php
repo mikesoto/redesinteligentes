@@ -12,9 +12,10 @@
       }
     ?>
     @foreach($weeks_info as $week)
-      <?php 
+      <?php     
         //hide any weeks not in the filter period if requested
         $filtered = ($filter_period > 0 && $periodo != $filter_period)? 'hidden' : ''; 
+
         //gather all patrocinios for this week
         $week_patrocinios = [];
         foreach( $comsPatr as $patr ){
@@ -27,6 +28,13 @@
         foreach( $comsMult as $mlt ){
           if( $mlt->created_at >= $week['week_lunes'] && $mlt->created_at <= $week['week_domingo']){
             array_push($week_multiples, $mlt);
+          }
+        }
+        //gather all the bono20s for this week
+        $week_bono20s = [];
+        foreach( $comsBono as $bn ){
+          if( $bn->created_at >= $week['week_lunes'] && $bn->created_at <= $week['week_domingo']){
+            array_push($week_bono20s, $bn);
           }
         }
       ?>
@@ -98,6 +106,17 @@
                   <td>{{ $comMult->new_user_name }} ({{ $comMult->new_user_id }})</td>
                   <td>{{ $comMult->pat_user_name }} ({{ $comMult->patroc_id }})</td>
                   <td>{{ $comMult->upline_user_name }} ({{ $comMult->upline_id }})</td>
+                </tr>
+              @endforeach
+              @foreach( $week_bono20s as $comBono)
+                <tr>
+                  <td>{{ date('d/m/Y', strtotime($comBono->created_at)) }}</td>
+                  <td><label class="label label-warning">{{ $comBono->type }}</label></td>
+                  <td>${{ $comBono->amount }}</td>
+                  <td>{{ $comBono->rec_user_name }} ({{ $comBono->user_id }})</td>
+                  <td>{{ $comBono->new_user_name }} ({{ $comBono->new_user_id }})</td>
+                  <td>{{ $comBono->pat_user_name }} ({{ $comBono->patroc_id }})</td>
+                  <td>{{ $comBono->upline_user_name }} ({{ $comBono->upline_id }})</td>
                 </tr>
               @endforeach
               </tbody>

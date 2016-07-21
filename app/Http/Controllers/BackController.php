@@ -94,14 +94,18 @@ class BackController extends Controller
   	$patrocinios = User::where('patrocinador', '=', $cur_user->id)->get();
 		$comsPatr_query = Comision::where('type','=','patrocinio');
 		$comsMult_query = Comision::where('type','=','multiplo');
+		$comsBono_query = Comision::where('type','=','bono20');
 		//only the main admin account can view all patrocinios
 		if($cur_user->id > 1){
 			//normal users can only view their own patrocinios
 			$comsPatr_query->where('user_id','=',$cur_user->id);
 			$comsMult_query->where('user_id','=',$cur_user->id);
+			$comsBono_query->where('user_id','=',$cur_user->id);
 		}
+		//execute the queries for comisiones
 		$comsPatr = $comsPatr_query->get();
 		$comsMult = $comsMult_query->get();
+		$comsBono = $comsBono_query->get();
 		//get the name of the new users for each patrocinio
 		foreach($comsPatr as $comPatr){
 			$recUser = User::find($comPatr->user_id);
@@ -113,7 +117,7 @@ class BackController extends Controller
 			$patUser = User::find($comPatr->patroc_id);
 			$comPatr->pat_user_name = $patUser->nombre.' '.$patUser->apellido_paterno;
 
-			$uplineUser = User::find($comPatr->patroc_id);
+			$uplineUser = User::find($comPatr->upline_id);
 			$comPatr->upline_user_name = $uplineUser->nombre.' '.$uplineUser->apellido_paterno;
 		}
 
@@ -128,8 +132,23 @@ class BackController extends Controller
 			$patUser = User::find($comMult->patroc_id);
 			$comMult->pat_user_name = $patUser->nombre.' '.$patUser->apellido_paterno;
 
-			$uplineUser = User::find($comMult->patroc_id);
+			$uplineUser = User::find($comMult->upline_id);
 			$comMult->upline_user_name = $uplineUser->nombre.' '.$uplineUser->apellido_paterno;
+		}
+
+		//get the name of the new users for each multiple
+		foreach($comsBono as $comBono){
+			$recUser = User::find($comBono->user_id);
+			$comBono->rec_user_name = $recUser->nombre.' '.$recUser->apellido_paterno;
+
+			$newUser = User::find($comBono->new_user_id);
+			$comBono->new_user_name = $newUser->nombre.' '.$newUser->apellido_paterno;
+
+			$patUser = User::find($comBono->patroc_id);
+			$comBono->pat_user_name = $patUser->nombre.' '.$patUser->apellido_paterno;
+
+			$uplineUser = User::find($comBono->upline_id);
+			$comBono->upline_user_name = $uplineUser->nombre.' '.$uplineUser->apellido_paterno;
 		}
 		
 		//generate ganancias value
@@ -138,6 +157,21 @@ class BackController extends Controller
 			//earnings for the company come from the users investment's and comissions for company
 			foreach($comsPatr as $comPatr){
 				$ganancias += 1150;
+				if($comPatr->user_id == 1){
+					$ganancias += $comPatr->amount;
+				}
+			}
+			//add multiples value only for the company
+			foreach($comsMult as $comMult){
+				if($comMult->user_id == 1){
+					$ganancias += $comMult->amount;
+				}
+			}
+			//add bono20s value only for the company
+			foreach($comsBono as $comBono){
+				if($comBono->user_id == 1){
+					$ganancias += $comBono->amount;
+				}
 			}
 		}else{
 			//earnings for users are from the patrocinio amount
@@ -150,6 +184,12 @@ class BackController extends Controller
 			foreach($comsMult as $comMult){
 				if($comMult->user_id == $cur_user->id){
 					$ganancias += $comMult->amount;
+				}
+			}
+			//earnings for users are also from the bono20 amount
+			foreach($comsBono as $comBono){
+				if($comBono->user_id == $cur_user->id){
+					$ganancias += $comBono->amount;
 				}
 			}
 		}
@@ -224,7 +264,6 @@ class BackController extends Controller
     	$next_date = $earliest->addWeek();
     	array_push($weeks_info, getWeekInfo($next_date));
     }
-
 		//get the contents of the multiples json
 		$string_json = file_get_contents(storage_path()."/app/multiples.json");
 		$mults_data = json_decode($string_json);
@@ -237,6 +276,7 @@ class BackController extends Controller
 			'patrocinios' => $patrocinios,
 			'comsPatr' => $comsPatr,
 			'comsMult' => $comsMult,
+			'comsBono' => $comsBono,
 			'ganancias' => $ganancias,
 			'weeks_info' => $weeks_info,
 			'mults_data' => $mults_data,
@@ -619,6 +659,262 @@ class BackController extends Controller
 			
 			return redirect('/oficina-virtual');
 
+		}else{
+			echo 'not authorized... redirecting';
+			return redirect('/oficina-virtual');
+		}
+	}
+
+	public function generateBono20List(Request $request){
+		//only the admin user can update persistant bono20s data 
+		if(Auth::user()->id == 1){
+			//holds the objects of user ids and their bono20s (will be converted to json and stored in file)
+			$cur_bono20s = [];
+			//get ordered list of all users
+	  	$users_arr = User::orderBy('id', 'asc')->get();
+		  //get count of original list
+		  $list_length = count($users_arr);
+			//function to count each user's left and right side and separate user's into left and right arrays
+		  function doLadoCounts($tree,$level,$to_count,$upline,$side){
+		    $found = false;
+		    //check if tree level exists
+		    if( isset($tree[$level]) ){
+		      //search through all socios in this level
+		      foreach( $tree[$level] as $socio){
+		        //look for the specified side and parent socio
+		        if($socio->side == $side && $socio->upline == $upline){
+		          //set found to true
+		          $found = true;
+		          //increment the count for this side
+		          global $left_count;
+		          global $right_count;
+		          if($to_count == 'L'){
+		            array_push($GLOBALS['lefties'], $socio);
+		          }else{
+		            array_push($GLOBALS['righties'], $socio);
+		          }
+		          //continue down to the next level
+		          doLadoCounts($tree,$level+1,$to_count,$socio->id,'left');
+		          doLadoCounts($tree,$level+1,$to_count,$socio->id,'right');
+		        }
+		      }
+		      //socio not found on this level end function
+		      if(!$found){
+		        return false;
+		      }
+		    }
+			}
+
+			//loop through ordered users list to find bono20s
+			foreach($users_arr as $root_user){
+				echo 'cur_user: '.$root_user->id.'<br>';
+				
+				//reset the arrays to hold the lefts and rights members of each side
+			  $GLOBALS['lefties'] = array();
+			  $GLOBALS['righties'] = array();
+		   	
+		   	//get the tree from the root user's position
+		  	$tree = [];
+		  	$tree[0] = [];
+		  	$users = User::where('upline', '=', $root_user->id)->get();
+		  	foreach($users as $socio){
+		  		array_push($tree[0],$socio);
+		  	}
+		  	$i = -1;
+		  	while(count($tree[$i+1])){
+		  		$tree[$i+2] = self::getNextLevel($i+1,$tree[$i+1]);
+		  		$i++;
+		  	}
+			 
+			  //call doLadoCounts for the root user's left side
+        doLadoCounts($tree,0,'L',$root_user->id,'left');
+        //call doLadoCounts for the root user's right side
+        doLadoCounts($tree,0,'R',$root_user->id,'right');
+
+        //get lefties and righties data
+        $l_arr = $GLOBALS['lefties'];
+        $r_arr = $GLOBALS['righties'];
+        $l_length = count($l_arr);
+        $r_length = count($r_arr);
+        //Sort the lefties and righties by id
+        usort($l_arr, array($this, "compare"));
+        usort($r_arr, array($this, "compare"));
+
+        // //get count of longest list or the 1st if both are equal
+        $max_length = ($l_length >= $r_length)? $l_length : $r_length;
+        //both sides must have at least 1 registered user
+        if(isset($l_arr[0]) && isset($r_arr[0])){
+	        //get the date of the first registration
+	        $start_date_str = ($l_arr[0]->fecha_ingreso <= $r_arr[0]->fecha_ingreso)? $l_arr[0]->fecha_ingreso : $r_arr[0]->fecha_ingreso;
+	        $start_date = \DateTime::createFromFormat('Y-m-d H:i:s', $start_date_str.' 00:00:00');
+	        //get the date of the last registration
+	        $end_date_str = ($l_arr[$l_length -1]->fecha_ingreso >= $r_arr[$r_length -1]->fecha_ingreso)? $l_arr[$l_length -1]->fecha_ingreso : $r_arr[$r_length -1]->fecha_ingreso;
+	        $end_date = \DateTime::createFromFormat('Y-m-d H:i:s', $end_date_str.' 00:00:00');
+   				echo 'start date: '.$start_date_str.'<br>';
+   				echo 'end date: '.$end_date_str.'<br>';
+	        //reset array to hold all found bono20 comissions for this user
+	        $bono20Coms = [];
+	        $lc = 0;
+	        $rc = 0;
+	        $ltc = [];//holds left 10 counts users
+	        $rtc = [];//holds right 10 counts users
+	        echo '<table border="1">
+	                <tr>
+	                  <th>fecha</th>
+	                  <th>ids izq</th>
+	                  <th>ids drch</th>
+	                  <th>cont izq</th>
+	                  <th>cont drch</th>
+	                  <th>cont *10 izq</th>
+	                  <th>cont *10 drch</th>
+	                  <th>es bono 20?</th>
+	                </tr>';
+	        
+	        for($dt = $start_date; $dt <= $end_date; $dt ){       
+	          echo '<tr>
+	                  <td>
+	                  	'.$dt->format('Y-m-d').'
+	                  </td>
+	                  <td>';
+			                foreach($l_arr as $soc){
+			                  if($soc->fecha_ingreso == $dt->format('Y-m-d')){
+			                    $lc++;
+			                    if($lc % 10 == 0){
+			                      array_push($ltc, $soc);
+			                      echo '<strong>'.$soc->id.'</strong>,';
+			                    }else{
+			                      echo $soc->id.',';
+			                    }
+			                  }
+			                } 
+	          echo   '</td>';
+	        	echo 	 '<td>';
+	                foreach($r_arr as $soc){
+	                  if($soc->fecha_ingreso == $dt->format('Y-m-d')){
+	                    $rc++;
+	                    if($rc % 10 == 0){
+	                      array_push($rtc, $soc);
+	                      echo '<strong>'.$soc->id.'</strong>,';
+	                    }else{
+	                      echo $soc->id.',';
+	                    }
+	                  }
+	                }  
+	          echo   '</td>';
+	        	echo 	 '<td>
+	                    '.$lc.'
+	                  </td>
+	                  <td>
+	                    '.$rc.'
+	                  </td>';
+	                  $left_ten_count = count($ltc);
+	                  $right_ten_count = count($rtc);
+	          echo '  <td>
+	                    '.$left_ten_count.'
+	                  </td>
+	                  <td>
+	                    '.$right_ten_count.'
+	                  </td>';
+	          echo '  <td>';
+	                    //check if both sides have at least one ten count
+	                    if($left_ten_count > 0 && $right_ten_count > 0){
+	                      //find out which side has less ten counts (or default to left count if they are equal)
+	                      $min_index = ($left_ten_count <= $right_ten_count)? $left_ten_count -1 : $right_ten_count-1;
+	                      // echo 'min_index: '.$min_index.'<br>';
+	                      //loop through the indexes of both arrays (until the shortest min_index)
+	                      for($x = 0; $x <= $min_index; $x++){
+	                        //check if both ten count arrays have a ten count in this index (only hold ten-count users) 
+	                        if(isset($ltc[$x]) && isset($rtc[$x])){
+	                          //we have a user in both x positions
+	                          //check if the object already exists in the array
+	                          $bv_exists = false;
+	                          foreach($bono20Coms as $bvcom){
+	                            if($bvcom->temp_id == $x+1){
+	                              // the comission already exists in the report array
+	                              $bv_exists = true;
+	                            }
+	                          }
+	                          if(!$bv_exists){
+	                            //not yet reported, create the new bono20 object
+	                            if($ltc[$x]->fecha_ingreso >= $rtc[$x]->fecha_ingreso){
+	                            	$last_fecha_ingreso = $ltc[$x]->fecha_ingreso;
+	                            	$new_user_id = $ltc[$x]->id;
+	                            	$patrocinador = $ltc[$x]->patrocinador;
+	                            	$upline = $ltc[$x]->upline;
+	                            }else{
+	                            	$last_fecha_ingreso = $rtc[$x]->fecha_ingreso;
+	                            	$new_user_id = $rtc[$x]->id;
+	                            	$patrocinador = $rtc[$x]->patrocinador;
+	                            	$upline = $rtc[$x]->upline;
+	                            }
+	                            $new_bvcom = (object) array(
+	                              'temp_id' => $x+1,
+	                              'left_id' => $ltc[$x]->id,
+	                              'right_id' => $rtc[$x]->id,
+	                              'fecha_sync' => $last_fecha_ingreso,
+	                              'new_user_id' => $new_user_id,
+	                              'patrocinador' => $patrocinador,
+	                              'upline' => $upline
+	                            );
+	                            array_push($bono20Coms, $new_bvcom);
+	                            echo 'Si';
+	                          }
+	                        }
+	                      }
+	                    }
+	          echo 		'</td>';
+	        	echo 	'</tr>';
+          	$dt = date_add($dt, date_interval_create_from_date_string('1 day'));
+	        }
+	        echo "</table>";
+      	}else{
+      		echo 'user does not have at least 1 registered user on each side<br>';
+      	}
+      	//add this user's data to the more permanent $cur_bono20s array
+      	$usr_report = (object) array(
+      		"user_id" => $root_user->id,
+      		"bonos" => $bono20Coms
+      	);
+      	array_push($cur_bono20s, $usr_report);
+      	echo '=============================================================<br>';
+			}
+
+			//update the file with the cur_bono20s array converted to json
+			file_put_contents(storage_path()."/app/bono20s.json", json_encode($cur_bono20s));
+
+
+			//store any new multiples in comissiones table 
+			foreach($cur_bono20s as $usr){
+				foreach($usr->bonos as $bn){
+					$com_amt = 3500.00;
+					//check if the comission already exists
+					$comBono_res = Comision::where('type','=','bono20')
+																	 ->where('user_id','=',$usr->user_id)
+																	 ->where('new_user_id', '=', $bn->new_user_id)
+																	 ->first();
+					if($comBono_res){
+						//comission bono20 already exists, skip this one
+					}else{
+						//comission bono20 does not exist, add to the database
+						$new_mult_com = Comision::create([
+							'user_id' => $usr->user_id,
+							'new_user_id' => $bn->new_user_id,
+							'upline_id' => $bn->upline,
+							'patroc_id' => $bn->patrocinador,
+							'asignado_id' => 0,
+							'type' => 'bono20',
+							'amount' => $com_amt,
+							'date_payed' => '0000-00-00',
+							'created_at' => $bn->fecha_sync
+						]);
+					}
+				}			
+			}
+
+			//add succes message
+			\Session::push('alert-success', 'Bonos 20 de toda la red creados y guardados con éxito');
+			
+			return redirect('/oficina-virtual');
 		}else{
 			echo 'not authorized... redirecting';
 			return redirect('/oficina-virtual');

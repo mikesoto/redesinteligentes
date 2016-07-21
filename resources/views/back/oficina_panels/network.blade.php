@@ -95,11 +95,11 @@
           //set found to true
           $found = true;
           //increment the count for this side
+          global $left_count;
+          global $right_count;
           if($to_count == 'L'){
-            global $left_count;
             $left_count++;
           }else{
-            global $right_count;
             $right_count++;
           }
           //continue down to the next level
@@ -290,11 +290,13 @@
           global $right_count;
           $total_count = $left_count+$right_count;
           $patr_count = count($comsPatr);
+          $bono_count = count($comsBono);
           echo '<h4>
                   <label class="label label-success">Izquierdo: '.$left_count.'</label> | 
                   <label class="label label-primary">Derecho: '.$right_count.'</label> | 
                   <label class="label label-default">Total: '.$total_count.'</label> |
-                  <label class="label label-info">Patrocinios: '.$patr_count.'</label> 
+                  <label class="label label-info">Patrocinios: '.$patr_count.'</label> |
+                  <label class="label label-warning">Bono 20s: '.$bono_count.'</label>
                 </h4>';
                 // the multiples total count is appended to the h4 by javascript
         ?>
