@@ -66,10 +66,10 @@
           <table class="table table-hover {{ $filtered }} comisiones-main-table">
             <tr>
               <td colspan="7">
-                <a class="btn btn-primary btn-xs toggle-comision-cat" data-toggle="collapse" data-target="#patrocs_row">Patrocinios <span class="badge pull-right">{{ count($week_patrocinios) }}</span></a>
+                <a class="btn btn-primary btn-xs toggle-comision-cat" data-toggle="collapse" data-target="#patrocs_row_{{$week['week_num']}}">Patrocinios <span class="badge pull-right">{{ count($week_patrocinios) }}</span></a>
               </td>
             </tr>
-            <tbody id="patrocs_row" class="collapse">
+            <tbody id="patrocs_row_{{$week['week_num']}}" class="collapse">
               <tr>
                 <th>Fecha</th>
                 <th>Tipo</th>
@@ -94,10 +94,10 @@
               
             <tr>
               <td colspan="7">
-                <a class="btn btn-danger btn-xs toggle-comision-cat" data-toggle="collapse" data-target="#mults_row">Multiplos <span class="badge pull-right">{{ count($week_multiples) }}</span></a>
+                <a class="btn btn-danger btn-xs toggle-comision-cat" data-toggle="collapse" data-target="#mults_row_{{$week['week_num']}}">Multiplos <span class="badge pull-right">{{ count($week_multiples) }}</span></a>
               </td>
             </tr>
-            <tbody id="mults_row" class="collapse">
+            <tbody id="mults_row_{{$week['week_num']}}" class="collapse">
               <tr>
                 <th>Fecha</th>
                 <th>Tipo</th>
@@ -123,10 +123,10 @@
 
             <tr>
               <td colspan="7">
-                <a class="btn btn-warning btn-xs toggle-comision-cat" data-toggle="collapse" data-target="#bonos_row">Bonos 20 <span class="badge pull-right">{{ count($week_bono20s) }}</span></a>
+                <a class="btn btn-warning btn-xs toggle-comision-cat" data-toggle="collapse" data-target="#bonos_row_{{$week['week_num']}}">Bonos 20 <span class="badge pull-right">{{ count($week_bono20s) }}</span></a>
               </td>
             </tr>
-            <tbody id="bonos_row" class="collapse">
+            <tbody id="bonos_row_{{$week['week_num']}}" class="collapse">
               <tr>
                 <th>Fecha</th>
                 <th>Tipo</th>
