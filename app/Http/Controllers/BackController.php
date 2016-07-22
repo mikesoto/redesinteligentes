@@ -269,6 +269,10 @@ class BackController extends Controller
 		$string_json = file_get_contents(storage_path()."/app/multiples.json");
 		$mults_data = json_decode($string_json);
 
+		//get the contents of the bono20s json
+		$string_json = file_get_contents(storage_path()."/app/bono20s.json");
+		$bonos_data = json_decode($string_json);
+
 		return view('back.oficina_virtual',[
 			'cur_user' => $cur_user,
 			'active_page' => 'oficina',
@@ -281,6 +285,7 @@ class BackController extends Controller
 			'ganancias' => $ganancias,
 			'weeks_info' => $weeks_info,
 			'mults_data' => $mults_data,
+			'bonos_data' => $bonos_data,
 			'tree' => $tree,
 		]);
 	}
