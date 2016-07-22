@@ -1,6 +1,7 @@
 @extends('layouts.back')
 <?php 
   $session_usr = Auth::user();
+  //var_dump($mults_data);
 ?>
 @section('content')
 <meta name="csrf-token" content="{{ csrf_token() }}">
@@ -83,7 +84,7 @@
                     $periodo = 1;
                     foreach($weeks_info as $week){
                       $sel = (isset($_GET["p"]) && $_GET["p"] == $periodo)? "selected" : "";
-                      echo '<option value="'.$periodo.'" '.$sel.'>'.$periodo.' <strong>('.date_create($week['week_lunes'])->format("d/m").' - '.date_create($week['week_domingo'])->format("d/m").')</strong></option>';
+                      echo '<option value="'.$periodo.'" '.$sel.'>'.$periodo.' <strong>('.date_create($week['week_domingo'])->format("d/m").' - '.date_create($week['week_sabado'])->format("d/m").')</strong></option>';
                       $periodo++;
                     }
                   ?>

@@ -209,32 +209,33 @@ class BackController extends Controller
 			$year_num 						= $dt->year;
 			$day_num 							= padLeft($dt->day);
 			$day_of_week 					= $dt->dayOfWeek;
-			$week_lunes 					= $dt->startOfWeek();
+			$week_domingo 					= $dt->startOfWeek()->subDay();
+				$week_domingo_ref 		= carbon::parse($week_domingo->toDateTimeString());
+			$week_lunes 					= $week_domingo_ref->addDay();
 				$week_lunes_ref 		= carbon::parse($week_lunes->toDateTimeString());
-			$week_martes 					= $week_lunes_ref->addDay();
-				$week_martes_ref 		= carbon::parse($week_martes->toDateTimeString());
-			$week_miercoles 			= $week_martes_ref->addDay();
-				$week_miercoles_ref = carbon::parse($week_miercoles->toDateTimeString());
-			$week_jueves 					= $week_miercoles->addDay();
-				$week_jueves_ref 		= carbon::parse($week_jueves->toDateTimeString());
-			$week_viernes 				= $week_jueves_ref->addDay();
-				$week_viernes_ref 	= carbon::parse($week_viernes->toDateTimeString());
-			$week_sabado 					= $week_viernes_ref->addDay();
-				$week_sabado_ref 		= carbon::parse($week_sabado->toDateTimeString());
-			$week_domingo 				= $week_sabado_ref->addDay();
+			$week_martes 			= $week_lunes_ref->addDay();
+				$week_martes_ref = carbon::parse($week_martes->toDateTimeString());
+			$week_miercoles 					= $week_martes->addDay();
+				$week_miercoles_ref 		= carbon::parse($week_miercoles->toDateTimeString());
+			$week_jueves 				= $week_miercoles_ref->addDay();
+				$week_jueves_ref 	= carbon::parse($week_jueves->toDateTimeString());
+			$week_viernes 					= $week_jueves_ref->addDay();
+				$week_viernes_ref 		= carbon::parse($week_viernes->toDateTimeString());
+			$week_sabado 				= $week_viernes_ref->addDay();
 	    
 	    $data['week_num']      		= $week_num;
 			$data['month_num']      	= $month_num;
 			$data['year_num']      		= $year_num;
 			$data['day_num']      		= $day_num;
 			$data['day_of_week']      = $day_of_week;
+			$data['week_domingo']     = $week_domingo;
 			$data['week_lunes']      	= $week_lunes;
 			$data['week_martes']      = $week_martes;
 			$data['week_miercoles']   = $week_miercoles;
 			$data['week_jueves']      = $week_jueves;
 			$data['week_viernes']     = $week_viernes;
 			$data['week_sabado']      = $week_sabado;
-			$data['week_domingo']     = $week_domingo;
+			
 	    return($data);
     }
 

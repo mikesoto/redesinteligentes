@@ -19,21 +19,21 @@
         //gather all patrocinios for this week
         $week_patrocinios = [];
         foreach( $comsPatr as $patr ){
-          if( $patr->created_at >= $week['week_lunes'] && $patr->created_at <= $week['week_domingo']){
+          if( $patr->created_at >= $week['week_domingo'] && $patr->created_at <= $week['week_sabado']){
             array_push($week_patrocinios, $patr);
           }
         }
         //gather all patrocinios for this week
         $week_multiples = [];
         foreach( $comsMult as $mlt ){
-          if( $mlt->created_at >= $week['week_lunes'] && $mlt->created_at <= $week['week_domingo']){
+          if( $mlt->created_at >= $week['week_domingo'] && $mlt->created_at <= $week['week_sabado']){
             array_push($week_multiples, $mlt);
           }
         }
         //gather all the bono20s for this week
         $week_bono20s = [];
         foreach( $comsBono as $bn ){
-          if( $bn->created_at >= $week['week_lunes'] && $bn->created_at <= $week['week_domingo']){
+          if( $bn->created_at >= $week['week_domingo'] && $bn->created_at <= $week['week_sabado']){
             array_push($week_bono20s, $bn);
           }
         }
@@ -57,7 +57,7 @@
         ?>
         <div class="col-sm-12 {{ $filtered }}">
           <button type="button" class="btn btn-lg btn-default com-periodo-label" data-toggle="collapse" data-target="#week-{{$week['week_num']}}">
-            Periodo - {{ date_create($week['week_lunes'])->format("d") }} de {{ $trans_months[date_create($week['week_lunes'])->format("F")] }} al {{ date_create($week['week_domingo'])->format("d") }} de {{ $trans_months[date_create($week['week_domingo'])->format("F")] }} {{ date_create($week['week_domingo'])->format("Y") }}
+            Periodo - {{ date_create($week['week_domingo'])->format("d") }} de {{ $trans_months[date_create($week['week_domingo'])->format("F")] }} al {{ date_create($week['week_sabado'])->format("d") }} de {{ $trans_months[date_create($week['week_sabado'])->format("F")] }} {{ date_create($week['week_sabado'])->format("Y") }}
           </button>
         </div>
         <br>
