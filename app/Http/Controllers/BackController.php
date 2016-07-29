@@ -24,6 +24,38 @@ class BackController extends Controller
   }
 
 
+  private function getAsignado($upline){
+  	// default to empresa
+  	$asignado = User::find(1); 
+		//get first upline user
+		$user1 = User::find($upline);
+		if($user1){
+			//check if the user1's upline is not empresa
+			if($user1->upline > 0){
+				//continue to level 2
+				$user2 = User::find($user1->upline);
+				//check if the user2's upline is not empresa
+	  		if($user2->upline > 0){
+	  			//continue to level 3
+	  			$user3 = User::find($user2->upline);
+	  			//check if the user3's upline is not empresa
+		  		if($user3->upline > 0){
+		  			//continue to level 4
+		  			$user4 = User::find($user3->upline);
+		  			//check if the user4's upline is not empresa
+			  		if($user4->upline > 0){
+			  			//continue to level 5
+			  			$user5 = User::find($user4->upline);
+			  			//this is the user's asignado
+			  			$asignado = $user5;
+			  		}
+		  		}
+	  		}	
+			}
+		}
+  	return $asignado;
+  }
+
   private function getNextLevel($lvl,$cur){
   	$next = $lvl+1;
   	//check if current array has users
@@ -76,6 +108,9 @@ class BackController extends Controller
   		//no requested filter for user, use currently logged in user
   		$cur_user = Auth::user();
   	}
+  	//get the asignado for the current user
+  	$asignado = self::getAsignado($cur_user->upline);
+  
   	//create tree by levels (each level is next index in array)
   	$tree = [];
   	$tree[0] = [];
@@ -95,17 +130,20 @@ class BackController extends Controller
 		$comsPatr_query = Comision::where('type','=','patrocinio');
 		$comsMult_query = Comision::where('type','=','multiplo');
 		$comsBono_query = Comision::where('type','=','bono20');
+		$comsAsig_query = Comision::where('type','=','asignado');
 		//only the main admin account can view all patrocinios
 		if($cur_user->id > 1){
 			//normal users can only view their own patrocinios
 			$comsPatr_query->where('user_id','=',$cur_user->id);
 			$comsMult_query->where('user_id','=',$cur_user->id);
 			$comsBono_query->where('user_id','=',$cur_user->id);
+			$comsAsig_query->where('user_id','=',$cur_user->id);
 		}
 		//execute the queries for comisiones
 		$comsPatr = $comsPatr_query->get();
 		$comsMult = $comsMult_query->get();
 		$comsBono = $comsBono_query->get();
+		$comsAsig = $comsAsig_query->get();
 		//get the name of the new users for each patrocinio
 		foreach($comsPatr as $comPatr){
 			$recUser = User::find($comPatr->user_id);
@@ -150,6 +188,21 @@ class BackController extends Controller
 			$uplineUser = User::find($comBono->upline_id);
 			$comBono->upline_user_name = $uplineUser->nombre.' '.$uplineUser->apellido_paterno;
 		}
+
+		//get the name of the new users for each asignado multiple
+		foreach($comsAsig as $comAsig){
+			$recUser = User::find($comAsig->user_id);
+			$comAsig->rec_user_name = $recUser->nombre.' '.$recUser->apellido_paterno;
+
+			$newUser = User::find($comAsig->new_user_id);
+			$comAsig->new_user_name = $newUser->nombre.' '.$newUser->apellido_paterno;
+
+			$patUser = User::find($comAsig->patroc_id);
+			$comAsig->pat_user_name = $patUser->nombre.' '.$patUser->apellido_paterno;
+
+			$uplineUser = User::find($comAsig->upline_id);
+			$comAsig->upline_user_name = $uplineUser->nombre.' '.$uplineUser->apellido_paterno;
+		}
 		
 		//generate ganancias value
 		$ganancias = 0.00;
@@ -173,6 +226,12 @@ class BackController extends Controller
 					$ganancias += $comBono->amount;
 				}
 			}
+			//add comsAsig value only for the company
+			foreach($comsAsig as $comAsig){
+				if($comAsig->user_id == 1){
+					$ganancias += $comAsig->amount;
+				}
+			}
 		}else{
 			//earnings for users are from the patrocinio amount
 			foreach($comsPatr as $comPatr){
@@ -190,6 +249,12 @@ class BackController extends Controller
 			foreach($comsBono as $comBono){
 				if($comBono->user_id == $cur_user->id){
 					$ganancias += $comBono->amount;
+				}
+			}
+			//earnings for users are also from the asignado amount
+			foreach($comsAsig as $comAsig){
+				if($comAsig->user_id == $cur_user->id){
+					$ganancias += $comAsig->amount;
 				}
 			}
 		}
@@ -275,6 +340,7 @@ class BackController extends Controller
 
 		return view('back.oficina_virtual',[
 			'cur_user' => $cur_user,
+			'asignado' => $asignado,
 			'active_page' => 'oficina',
 			'title_page' => 'Oficina Virtual',
 			'downlines' => $downlines,
@@ -282,6 +348,7 @@ class BackController extends Controller
 			'comsPatr' => $comsPatr,
 			'comsMult' => $comsMult,
 			'comsBono' => $comsBono,
+			'comsAsig' => $comsAsig,
 			'ganancias' => $ganancias,
 			'weeks_info' => $weeks_info,
 			'mults_data' => $mults_data,
@@ -467,37 +534,6 @@ class BackController extends Controller
     return redirect('/office/api/generateMultsList');//recalculate the multiples and overwrite the json file
 	}
 
-
-	private function getAsignado($upline){
-  	// default to empresa
-  	$asignado = User::find(1); 
-		//get first upline user
-		$user1 = User::find($upline);
-		//check if the user1's upline is not empresa
-		if($user1->upline > 0){
-			//continue to level 2
-			$user2 = User::find($user1->upline);
-			//check if the user2's upline is not empresa
-  		if($user2->upline > 0){
-  			//continue to level 3
-  			$user3 = User::find($user2->upline);
-  			//check if the user3's upline is not empresa
-	  		if($user3->upline > 0){
-	  			//continue to level 4
-	  			$user4 = User::find($user3->upline);
-	  			//check if the user4's upline is not empresa
-		  		if($user4->upline > 0){
-		  			//continue to level 5
-		  			$user5 = User::find($user4->upline);
-		  			//this is the user's asignado
-		  			$asignado = $user5;
-		  		}
-	  		}
-  		}	
-		}
-  	return $asignado;
-  }
-
   private function genComPatr($newUser){
   	//patrocinio (every patrocinador gets this comission)
   	// this comission is assigned to the patrocinador
@@ -645,17 +681,46 @@ class BackController extends Controller
 					}else{
 						//comission multiplo does not exist, add to the database
 						$m_user = User::find($m);
+						$m_user_asig = self::getAsignado($m_user->upline);
 						$new_mult_com = Comision::create([
 							'user_id' => $mult->user_id,
 							'new_user_id' => $m,
 							'upline_id' => $m_user->upline,
 							'patroc_id' => $m_user->patrocinador,
-							'asignado_id' => 0,
+							'asignado_id' => $m_user_asig,
 							'type' => 'multiplo',
 							'amount' => $com_amt,
 							'date_payed' => '0000-00-00',
 							'created_at' => $m_user->fecha_ingreso
 						]);
+					}
+					//if the commision amount is 0.00 than this was a 5th or 6th multiple
+					if($com_amt == 0.00){
+						$mult_user = User::find($mult->user_id);
+						$mult_asig = self::getAsignado($mult_user->upline);
+						//check if the comission already exists
+						$comMultAsig_res = Comision::where('type','=','asignado')
+																 ->where('user_id','=',$mult_asig->id)
+																 ->where('new_user_id', '=', $m)
+																 ->first();
+						if($comMultAsig_res){
+							//comission asignado already exists, skip this multiple
+						}else{
+							$m_user = User::find($m);
+							$m_user_asig = self::getAsignado($m_user->upline);
+							//create a comission of type asignado for the $asig
+							$new_mult_com = Comision::create([
+								'user_id' => $mult_asig->id,
+								'new_user_id' => $m,
+								'upline_id' => $m_user->upline,
+								'patroc_id' => $m_user->patrocinador,
+								'asignado_id' => $m_user_asig,
+								'type' => 'asignado',
+								'amount' => 250.00,
+								'date_payed' => '0000-00-00',
+								'created_at' => $m_user->fecha_ingreso
+							]);
+						}
 					}
 				}			
 			}

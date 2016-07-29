@@ -30,6 +30,13 @@
             array_push($week_multiples, $mlt);
           }
         }
+        //gather all the Asignados for this week
+        $week_asigs = [];
+        foreach( $comsAsig as $as ){
+          if( $as->created_at >= $week['week_domingo'] && $as->created_at <= $week['week_sabado']){
+            array_push($week_asigs, $as);
+          }
+        }
         //gather all the bono20s for this week
         $week_bono20s = [];
         foreach( $comsBono as $bn ){
@@ -37,6 +44,7 @@
             array_push($week_bono20s, $bn);
           }
         }
+
       ?>
       @if(count($week_patrocinios))
         <?php 
@@ -117,6 +125,34 @@
                 <td>{{ $comMult->new_user_name }} ({{ $comMult->new_user_id }})</td>
                 <td>{{ $comMult->pat_user_name }} ({{ $comMult->patroc_id }})</td>
                 <td>{{ $comMult->upline_user_name }} ({{ $comMult->upline_id }})</td>
+              </tr>
+              @endforeach
+            </tbody>
+
+            <tr>
+              <td colspan="7">
+                <a class="btn btn-success btn-xs toggle-comision-cat" data-toggle="collapse" data-target="#asigs_row_{{$week['week_num']}}">Asignados <span class="badge pull-right">{{ count($week_asigs) }}</span></a>
+              </td>
+            </tr>
+            <tbody id="asigs_row_{{$week['week_num']}}" class="collapse">
+              <tr>
+                <th>Fecha</th>
+                <th>Tipo</th>
+                <th>Monto</th>
+                <th>Receptor</th>
+                <th>Nuevo Asociado</th>
+                <th>Patrocinador</th>
+                <th>Upline</th>
+              </tr>
+              @foreach( $week_asigs as $comAsig)
+              <tr>
+                <td>{{ date('d/m/Y', strtotime($comAsig->created_at)) }}</td>
+                <td><label class="label label-success">{{ $comAsig->type }}</label></td>
+                <td>${{ $comAsig->amount }}</td>
+                <td>{{ $comAsig->rec_user_name }} ({{ $comAsig->user_id }})</td>
+                <td>{{ $comAsig->new_user_name }} ({{ $comAsig->new_user_id }})</td>
+                <td>{{ $comAsig->pat_user_name }} ({{ $comAsig->patroc_id }})</td>
+                <td>{{ $comAsig->upline_user_name }} ({{ $comAsig->upline_id }})</td>
               </tr>
               @endforeach
             </tbody>
