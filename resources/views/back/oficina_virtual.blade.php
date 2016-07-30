@@ -126,13 +126,13 @@
     <!-- /CONTROL PANEL BUTTONS -->
 
     <div class="col-sm-12">
-      @include('back.oficina_panels.dashboard')
-
       @include('back.oficina_panels.network')
   
       @include('back.oficina_panels.commissions')
       
       @include('back.oficina_panels.downloads')
+      <!-- DASHBOARD MUST BE LOADED LAST -->
+      @include('back.oficina_panels.dashboard')
     </div> 
   </div>
   <!--/OFFICE MAIN CONTENT-->

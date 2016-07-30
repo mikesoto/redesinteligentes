@@ -24,7 +24,7 @@
                 <td id="dash-mult-count"></td>
                 <td>{{ count($comsAsig) }}</td>
                 <td>{{ count($comsBono) }}</td>
-                <td>$<span id="dash-comissions-total">{{ number_format($ganancias) }}</span></td>
+                <td>${{ number_format($GLOBALS['total_ganancias'], 2, '.',',') }}</td>
                 <td>Bronce</td>
               </tr>
             </tbody>

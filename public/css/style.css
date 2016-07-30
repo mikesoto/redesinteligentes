@@ -136,11 +136,27 @@ tr.listado-row.multiple.5th-mult{
 }
 
 .toggle-comision-cat{
-	width:120px;
+	width:250px;
 	text-align:left;
 	margin-left:30px;
 	padding-top:5px;
 	font-weight:bold;
+}
+
+.com-ganancias-total{
+	border-bottom: 2px solid #333;
+	padding-right:20px;
+	padding-bottom:5px;
+}
+
+.com-ganancias-total .com-total-text{
+	margin-right:10px;
+	font-size:20px;
+	line-height:20px;
+}
+
+.com-ganancias-total .badge{
+	background-color:#29af15;
 }
 
 .nav-tabs{

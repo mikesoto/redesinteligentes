@@ -136,11 +136,6 @@ $(document).ready(function() {
 	  $(".side-counts h4").append('| <label class="label label-danger">Multiples: '+m_count+'</label> ');
 		//update the dashboard with the total multiples count
 		$("#dash-mult-count").html(m_count);
-		//add the earnings from multiples to the ganancias total
-		var cur_earnings = parseFloat($("#dash-comissions-total").html().replace(',',''));
-		var final_earnings = cur_earnings + mults_earnings;
-		//update the final earnings ammount
-		$("#dash-comissions-total").html(final_earnings.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
 	}
 
 
