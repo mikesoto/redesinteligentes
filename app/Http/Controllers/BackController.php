@@ -132,13 +132,13 @@ class BackController extends Controller
 		$comsBono_query = Comision::where('type','=','bono20');
 		$comsAsig_query = Comision::where('type','=','asignado');
 		//only the main admin account can view all patrocinios
-		if($cur_user->id > 1){
+		// if($cur_user->id > 1){
 			//normal users can only view their own patrocinios
 			$comsPatr_query->where('user_id','=',$cur_user->id);
 			$comsMult_query->where('user_id','=',$cur_user->id);
 			$comsBono_query->where('user_id','=',$cur_user->id);
 			$comsAsig_query->where('user_id','=',$cur_user->id);
-		}
+		// }
 		//execute the queries for comisiones
 		$comsPatr = $comsPatr_query->get();
 		$comsMult = $comsMult_query->get();
@@ -206,33 +206,33 @@ class BackController extends Controller
 		
 		//generate ganancias value
 		$ganancias = 0.00;
-		if($cur_user->id == 1){
-			//earnings for the company come from the users investment's and comissions for company
-			foreach($comsPatr as $comPatr){
-				$ganancias += 1150;
-				if($comPatr->user_id == 1){
-					$ganancias += $comPatr->amount;
-				}
-			}
-			//add multiples value only for the company
-			foreach($comsMult as $comMult){
-				if($comMult->user_id == 1){
-					$ganancias += $comMult->amount;
-				}
-			}
-			//add bono20s value only for the company
-			foreach($comsBono as $comBono){
-				if($comBono->user_id == 1){
-					$ganancias += $comBono->amount;
-				}
-			}
-			//add comsAsig value only for the company
-			foreach($comsAsig as $comAsig){
-				if($comAsig->user_id == 1){
-					$ganancias += $comAsig->amount;
-				}
-			}
-		}else{
+		// if($cur_user->id == 1){
+		// 	//earnings for the company come from the users investment's and comissions for company
+		// 	foreach($comsPatr as $comPatr){
+		// 		$ganancias += 1150;
+		// 		if($comPatr->user_id == 1){
+		// 			$ganancias += $comPatr->amount;
+		// 		}
+		// 	}
+		// 	//add multiples value only for the company
+		// 	foreach($comsMult as $comMult){
+		// 		if($comMult->user_id == 1){
+		// 			$ganancias += $comMult->amount;
+		// 		}
+		// 	}
+		// 	//add bono20s value only for the company
+		// 	foreach($comsBono as $comBono){
+		// 		if($comBono->user_id == 1){
+		// 			$ganancias += $comBono->amount;
+		// 		}
+		// 	}
+		// 	//add comsAsig value only for the company
+		// 	foreach($comsAsig as $comAsig){
+		// 		if($comAsig->user_id == 1){
+		// 			$ganancias += $comAsig->amount;
+		// 		}
+		// 	}
+		// }else{
 			//earnings for users are from the patrocinio amount
 			foreach($comsPatr as $comPatr){
 				if($comPatr->user_id == $cur_user->id){
@@ -257,7 +257,7 @@ class BackController extends Controller
 					$ganancias += $comAsig->amount;
 				}
 			}
-		}
+		// }
 
 		
 
