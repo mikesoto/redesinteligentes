@@ -55,7 +55,6 @@
                 </select>
               </div>
             </div>
-            
             <div class="col-sm-12">
               <hr>
               <p class="help-block">Datos Personales:</p>
