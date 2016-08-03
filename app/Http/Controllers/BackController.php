@@ -941,12 +941,15 @@ class BackController extends Controller
       	}else{
       		//echo 'user does not have at least 1 registered user on each side<br>';
       	}
-      	//add this user's data to the more permanent $cur_bono20s array
-      	$usr_report = (object) array(
-      		"user_id" => $root_user->id,
-      		"bonos" => $bono20Coms
-      	);
-      	array_push($cur_bono20s, $usr_report);
+      	//check if user has bono20coms
+      	if(isset($bono20Coms)){
+					//add this user's data to the more permanent $cur_bono20s array
+	      	$usr_report = (object) array(
+	      		"user_id" => $root_user->id,
+	      		"bonos" => $bono20Coms
+	      	);
+      		array_push($cur_bono20s, $usr_report);
+      	}
       	//echo '=============================================================<br>';
 			}
 
