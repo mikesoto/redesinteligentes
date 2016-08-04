@@ -82,6 +82,170 @@ class BackController extends Controller
 	  return $n_lvl;
   }
 
+
+  public function comisionesAll(Request $request){
+		if(Auth::user()->id == 1){
+			//get all comisiones
+			$comsPatr		 = Comision::where('type','=','patrocinio')->get();
+			$comsMult		 = Comision::where('type','=','multiplo')->get();
+			$comsBono		 = Comision::where('type','=','bono20')->get();
+			$comsAsig		 = Comision::where('type','=','asignado')->get();
+
+			//get the names for each patrocinio
+			foreach($comsPatr as $comPatr){
+				$recUser = User::find($comPatr->user_id);
+				$comPatr->rec_user_name = $recUser->nombre.' '.$recUser->apellido_paterno;
+
+				$newUser = User::find($comPatr->new_user_id);
+				$comPatr->new_user_name = $newUser->nombre.' '.$newUser->apellido_paterno;
+
+				$patUser = User::find($comPatr->patroc_id);
+				$comPatr->pat_user_name = $patUser->nombre.' '.$patUser->apellido_paterno;
+
+				$uplineUser = User::find($comPatr->upline_id);
+				$comPatr->upline_user_name = $uplineUser->nombre.' '.$uplineUser->apellido_paterno;
+			}
+			//get the names for each multiple
+			foreach($comsMult as $comMult){
+				$recUser = User::find($comMult->user_id);
+				$comMult->rec_user_name = $recUser->nombre.' '.$recUser->apellido_paterno;
+
+				$newUser = User::find($comMult->new_user_id);
+				$comMult->new_user_name = $newUser->nombre.' '.$newUser->apellido_paterno;
+
+				$patUser = User::find($comMult->patroc_id);
+				$comMult->pat_user_name = $patUser->nombre.' '.$patUser->apellido_paterno;
+
+				$uplineUser = User::find($comMult->upline_id);
+				$comMult->upline_user_name = $uplineUser->nombre.' '.$uplineUser->apellido_paterno;
+			}
+			//get the names for each bono
+			foreach($comsBono as $comBono){
+				$recUser = User::find($comBono->user_id);
+				$comBono->rec_user_name = $recUser->nombre.' '.$recUser->apellido_paterno;
+
+				$newUser = User::find($comBono->new_user_id);
+				$comBono->new_user_name = $newUser->nombre.' '.$newUser->apellido_paterno;
+
+				$patUser = User::find($comBono->patroc_id);
+				$comBono->pat_user_name = $patUser->nombre.' '.$patUser->apellido_paterno;
+
+				$uplineUser = User::find($comBono->upline_id);
+				$comBono->upline_user_name = $uplineUser->nombre.' '.$uplineUser->apellido_paterno;
+			}
+			//get the names for each asignado multiple
+			foreach($comsAsig as $comAsig){
+				$recUser = User::find($comAsig->user_id);
+				$comAsig->rec_user_name = $recUser->nombre.' '.$recUser->apellido_paterno;
+
+				$newUser = User::find($comAsig->new_user_id);
+				$comAsig->new_user_name = $newUser->nombre.' '.$newUser->apellido_paterno;
+
+				$patUser = User::find($comAsig->patroc_id);
+				$comAsig->pat_user_name = $patUser->nombre.' '.$patUser->apellido_paterno;
+
+				$uplineUser = User::find($comAsig->upline_id);
+				$comAsig->upline_user_name = $uplineUser->nombre.' '.$uplineUser->apellido_paterno;
+			}
+
+			$ganancias = 0.00;
+
+			foreach($comsPatr as $comPatr){
+					$ganancias += $comPatr->amount;
+			}
+			//earnings for users are also from the multiples amount
+			foreach($comsMult as $comMult){
+					$ganancias += $comMult->amount;
+			}
+			//earnings for users are also from the bono20 amount
+			foreach($comsBono as $comBono){
+					$ganancias += $comBono->amount;
+			}
+			//earnings for users are also from the asignado amount
+			foreach($comsAsig as $comAsig){
+					$ganancias += $comAsig->amount;
+			}
+
+			date_default_timezone_set("America/Mexico_City");
+	    $today = Carbon::today();
+	    //get the current week_num
+	 	  $cur_week_num = $today->weekOfYear;
+	 	  //set earliest to today by default
+	    $earliest = $today;
+	    //search for earliest commission date
+	    foreach($comsPatr as $comPatr){
+	    	if($comPatr->created_at < $earliest){
+	    		$earliest = $comPatr->created_at;
+	    	}
+	    }
+	   	//get week num for the earliest comission
+	    $earliest_week_num = $earliest->weekOfYear;
+	    //get the number of weeks from earliest to current
+	    $weeks_diff = $cur_week_num - $earliest_week_num;
+			//array to hold weeks info
+	    $weeks_info = array();
+	    //add the first week (week of earliest)
+	    array_push($weeks_info, self::getWeekInfo($earliest));
+	    //add the rest of the weeks up until today
+	    for($i=0; $i < $weeks_diff; $i++){
+	    	$next_date = $earliest->addWeek();
+	    	array_push($weeks_info, self::getWeekInfo($next_date));
+	    }
+
+			return view('back.comisiones_all',[
+				'title_page' => 'Reporte de Comisiones',
+				'active_page' => '',
+				'comsPatr' => $comsPatr,
+				'comsMult' => $comsMult,
+				'comsBono' => $comsBono,
+				'comsAsig' => $comsAsig,
+				'ganancias' => $ganancias,
+				'weeks_info' => $weeks_info
+			]);
+		}else{
+			return redirect('/oficina-virtual');
+		}
+	}
+
+
+	private function getWeekInfo($refDate){
+  	$data = [];
+ 	  $dt = Carbon::parse($refDate);
+ 	  $week_num  						= $dt->weekOfYear;
+ 	  $month_num 						= str_pad($dt->month,2,'0',STR_PAD_LEFT);
+		$year_num 						= $dt->year;
+		$day_num 							= str_pad($dt->day,2,'0',STR_PAD_LEFT);
+		$day_of_week 					= $dt->dayOfWeek;
+		$week_domingo 					= $dt->startOfWeek()->subDay();
+			$week_domingo_ref 		= carbon::parse($week_domingo->toDateTimeString());
+		$week_lunes 					= $week_domingo_ref->addDay();
+			$week_lunes_ref 		= carbon::parse($week_lunes->toDateTimeString());
+		$week_martes 			= $week_lunes_ref->addDay();
+			$week_martes_ref = carbon::parse($week_martes->toDateTimeString());
+		$week_miercoles 					= $week_martes->addDay();
+			$week_miercoles_ref 		= carbon::parse($week_miercoles->toDateTimeString());
+		$week_jueves 				= $week_miercoles_ref->addDay();
+			$week_jueves_ref 	= carbon::parse($week_jueves->toDateTimeString());
+		$week_viernes 					= $week_jueves_ref->addDay();
+			$week_viernes_ref 		= carbon::parse($week_viernes->toDateTimeString());
+		$week_sabado 				= $week_viernes_ref->addDay();
+    
+    $data['week_num']      		= $week_num;
+		$data['month_num']      	= $month_num;
+		$data['year_num']      		= $year_num;
+		$data['day_num']      		= $day_num;
+		$data['day_of_week']      = $day_of_week;
+		$data['week_domingo']     = $week_domingo;
+		$data['week_lunes']      	= $week_lunes;
+		$data['week_martes']      = $week_martes;
+		$data['week_miercoles']   = $week_miercoles;
+		$data['week_jueves']      = $week_jueves;
+		$data['week_viernes']     = $week_viernes;
+		$data['week_sabado']      = $week_sabado;
+		
+    return($data);
+  }
+
   public function oficinaVirtual(Request $request){
   	// $usr = User::find(6);
   	// $ch_pwd = bcrypt('redes123');
@@ -125,7 +289,7 @@ class BackController extends Controller
   	}
   	//get the two primary downlines for user
   	$downlines = User::where('upline', '=', $cur_user->id)->get();
-  	//get all comisiones of type patrocinio
+  	//get all comisiones
   	$patrocinios = User::where('patrocinador', '=', $cur_user->id)->get();
 		$comsPatr_query = Comision::where('type','=','patrocinio');
 		$comsMult_query = Comision::where('type','=','multiplo');
@@ -262,48 +426,6 @@ class BackController extends Controller
 		
 
 		//=============================== DATES INFO ========================
-		function padLeft($var){
-			return str_pad($var,2,'0',STR_PAD_LEFT);
-		}
-
-		function getWeekInfo($refDate){
-    	$data = [];
-	 	  $dt = Carbon::parse($refDate);
-	 	  $week_num  						= $dt->weekOfYear;
-	 	  $month_num 						= padLeft($dt->month);
-			$year_num 						= $dt->year;
-			$day_num 							= padLeft($dt->day);
-			$day_of_week 					= $dt->dayOfWeek;
-			$week_domingo 					= $dt->startOfWeek()->subDay();
-				$week_domingo_ref 		= carbon::parse($week_domingo->toDateTimeString());
-			$week_lunes 					= $week_domingo_ref->addDay();
-				$week_lunes_ref 		= carbon::parse($week_lunes->toDateTimeString());
-			$week_martes 			= $week_lunes_ref->addDay();
-				$week_martes_ref = carbon::parse($week_martes->toDateTimeString());
-			$week_miercoles 					= $week_martes->addDay();
-				$week_miercoles_ref 		= carbon::parse($week_miercoles->toDateTimeString());
-			$week_jueves 				= $week_miercoles_ref->addDay();
-				$week_jueves_ref 	= carbon::parse($week_jueves->toDateTimeString());
-			$week_viernes 					= $week_jueves_ref->addDay();
-				$week_viernes_ref 		= carbon::parse($week_viernes->toDateTimeString());
-			$week_sabado 				= $week_viernes_ref->addDay();
-	    
-	    $data['week_num']      		= $week_num;
-			$data['month_num']      	= $month_num;
-			$data['year_num']      		= $year_num;
-			$data['day_num']      		= $day_num;
-			$data['day_of_week']      = $day_of_week;
-			$data['week_domingo']     = $week_domingo;
-			$data['week_lunes']      	= $week_lunes;
-			$data['week_martes']      = $week_martes;
-			$data['week_miercoles']   = $week_miercoles;
-			$data['week_jueves']      = $week_jueves;
-			$data['week_viernes']     = $week_viernes;
-			$data['week_sabado']      = $week_sabado;
-			
-	    return($data);
-    }
-
 		//get earliest comision date 
 		date_default_timezone_set("America/Mexico_City");
     $today = Carbon::today();
@@ -324,11 +446,11 @@ class BackController extends Controller
 		//array to hold weeks info
     $weeks_info = array();
     //add the first week (week of earliest)
-    array_push($weeks_info, getWeekInfo($earliest));
+    array_push($weeks_info, self::getWeekInfo($earliest));
     //add the rest of the weeks up until today
     for($i=0; $i < $weeks_diff; $i++){
     	$next_date = $earliest->addWeek();
-    	array_push($weeks_info, getWeekInfo($next_date));
+    	array_push($weeks_info, self::getWeekInfo($next_date));
     }
 		//get the contents of the multiples json
 		$string_json = file_get_contents(storage_path()."/app/multiples.json");
@@ -691,7 +813,6 @@ class BackController extends Controller
 	  }
 		return redirect('/oficina-virtual');
 	}
-
 
 
   private function genComPatr($newUser){

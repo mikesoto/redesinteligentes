@@ -3,6 +3,9 @@
     <h3 class="panel-title">Comissiones</h3>
   </div>
   <div class="panel-body">
+    @if(Auth::user()->id == 1)
+      <a class="btn btn-info btn-xs" href="/comisiones/all" target="_blank">Ver Comisiones de Todos</a>
+    @endif
     <?php 
       //start period
       $periodo = 1;

@@ -33,6 +33,7 @@ Route::get('/', 'FrontController@homepage');
 
 //========================= BACK END ROUTES =========================
 Route::get('/oficina-virtual', 'BackController@oficinaVirtual');
+Route::get('/comisiones/all', 'BackController@comisionesAll');
 Route::post('/office/create/user', 'BackController@createUser');
 Route::post('/office/update/user', 'BackController@updateUser');
 
