@@ -117,7 +117,7 @@
             <button class="btn btn-warning" id="register-user-btn" data-toggle="modal" data-target="#register-user-modal">Registrar Socio</button>
             <button class="btn btn-warning" id="mults-map-btn" data-toggle="modal" data-target="#mults-map-modal">Mults</button>
             <button class="btn btn-warning" id="bonos-map-btn" data-toggle="modal" data-target="#bonos-map-modal">Bonos</button>
-            <button class="btn btn-default" id="datos-personales-btn" data-toggle="modal" data-target="#edit-user-modal">Datos Personales</button>
+            <button class="btn btn-warning" id="datos-personales-btn" data-toggle="modal" data-target="#edit-user-modal">Datos Personales</button>
           @endif 
           <button class="btn btn-primary cpanel-link" id="cpanel-downloads" data-panelName="downloads">Descargas</button>
         </div>
