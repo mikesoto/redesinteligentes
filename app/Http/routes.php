@@ -34,6 +34,7 @@ Route::get('/', 'FrontController@homepage');
 //========================= BACK END ROUTES =========================
 Route::get('/oficina-virtual', 'BackController@oficinaVirtual');
 Route::post('/office/create/user', 'BackController@createUser');
+Route::post('/office/update/user', 'BackController@updateUser');
 
 //========================= API USER ROUTES ==============================
 Route::get('/office/api/user/{id}', 'BackController@getUser');

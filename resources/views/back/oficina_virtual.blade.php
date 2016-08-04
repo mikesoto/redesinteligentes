@@ -113,11 +113,11 @@
           <button class="btn btn-primary cpanel-link" id="cpanel-dashboard" data-panelName="dashboard">Dashboard</button>
           <button class="btn btn-primary cpanel-link" id="cpanel-red" data-panelName="red">Red</button>
           <button class="btn btn-primary cpanel-link" id="cpanel-comissiones" data-panelName="comissiones">Comisiones</button>
-          <button class="btn btn-default" id="datos-personales-btn" data-toggle="modal" data-target="#datos-personales-modal">Datos Personales</button>
           @if ($session_usr->id == 1)
             <button class="btn btn-warning" id="register-user-btn" data-toggle="modal" data-target="#register-user-modal">Registrar Socio</button>
             <button class="btn btn-warning" id="mults-map-btn" data-toggle="modal" data-target="#mults-map-modal">Mults</button>
             <button class="btn btn-warning" id="bonos-map-btn" data-toggle="modal" data-target="#bonos-map-modal">Bonos</button>
+            <button class="btn btn-default" id="datos-personales-btn" data-toggle="modal" data-target="#edit-user-modal">Datos Personales</button>
           @endif 
           <button class="btn btn-primary cpanel-link" id="cpanel-downloads" data-panelName="downloads">Descargas</button>
         </div>
@@ -147,6 +147,7 @@
 <!-- MODALS -->
 @if($session_usr->id == 1)
   @include('back.oficina_modals.register_user_modal')
+  @include('back.oficina_modals.edit_user_modal')
   @include('back.oficina_modals.mults_map_modal')
   @include('back.oficina_modals.bonos_map_modal')
 @endif

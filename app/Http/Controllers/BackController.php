@@ -534,6 +534,166 @@ class BackController extends Controller
     return redirect('/office/api/generateMultsList');//recalculate the multiples and overwrite the json file
 	}
 
+	public function updateUser(Request $request){
+		$cur_usr = Auth::user();
+		//check if the current user is authorized to update user (only user 1)
+  	if($cur_usr->id != 1){
+  		$messages = array(
+			  'required' => 'No está autorizado para actualizar usuarios.',
+			);
+			$validator = \Validator::make(['custom_error' => ''], ['custom_error' => 'required'],$messages);
+			\Session::push('errors', $validator->messages() );
+			return redirect('/oficina-virtual');
+  	}
+  	$update_usr = User::find($request->update_usr);
+  	if($update_usr){
+			$fields = [
+				// 'upline' 									=> $request->upline,
+				// 'patrocinador' 						=> $request->patrocinador,
+				// 'side'										=> $request->lado,
+				// 'fecha_ingreso' 					=> $request->fecha_ingreso,
+				'email'										=> $request->email,
+				'nombre' 									=> $request->nombre,
+				'apellido_paterno' 				=> $request->apellido_paterno,
+				'apellido_materno' 				=> $request->apellido_materno,
+				'fecha_nac' 							=> $request->fecha_nac,
+				'ife' 										=> $request->ife,
+				'tel_cel' 								=> $request->tel_cel,
+				'cp' 											=> $request->cp,
+				'direccion' 							=> $request->direccion,
+				'colonia' 								=> $request->colonia,
+				'delegacion' 							=> $request->delegacion,
+				'estado' 									=> $request->estado,
+				'beneficiario' 						=> $request->beneficiario,
+				'parentesco' 							=> $request->parentesco,
+				'beneficiario_fecha_nac' 	=> $request->beneficiario_fecha_nac,				
+			];
+			$rules = [
+				// 'upline' 									=> 'required',
+				// 'patrocinador' 						=> 'required',
+				// 'side'										=> 'required',
+				// 'fecha_ingreso' 					=> 'required',
+				'nombre' 									=> 'required',
+				'apellido_paterno' 				=> 'required',
+				'apellido_materno' 				=> 'required',
+				'fecha_nac' 							=> '',
+				'ife' 										=> '',
+				'tel_cel' 								=> '',
+				'cp' 											=> 'required',
+				'direccion' 							=> 'required',
+				'colonia' 								=> 'required',
+				'delegacion' 							=> 'required',
+				'estado' 									=> 'required',
+				'beneficiario' 						=> 'required',
+				'parentesco' 							=> 'required',
+				'beneficiario_fecha_nac' 	=> '',		
+			];
+			//email field only validated if not empty
+			if($request->email != ''){
+				$rules['email'] = 'email';
+			}
+			$validator = \Validator::make($fields, $rules);
+	    if($validator->fails())
+	    {
+	      \Session::push('errors', $validator->messages() );
+	      return redirect('/oficina-virtual')->withInput();
+	    }
+	    //check if the upline user already has his two primary (left and right)
+	  	// $count_uplines_left = User::where('upline','=',$request->upline)->where('side','=','left')->count();
+	  	// $count_uplines_right = User::where('upline','=',$request->upline)->where('side','=','right')->count();
+	  	// if(($count_uplines_left + $count_uplines_right) == 2){
+	  	// 	$messages = array(
+				//   'required' => 'El usuario de upline ya cuenta con sus dos primarios. Por lo tanto no puede ser upline de este usuario.',
+				// );
+				// $validator = \Validator::make(['custom_error' => ''], ['custom_error' => 'required'],$messages);
+				// \Session::push('errors', $validator->messages() );
+				// return redirect('/oficina-virtual')->withInput($request->except('upline'));
+	  	// }
+	    //all validations passed, >>>>>
+
+	  	//convert ingreso date to mysql format
+	  	// $ing_arr = explode("/", $request->fecha_ingreso);
+	  	// $fields['fecha_ingreso'] = $ing_arr[2].'-'.$ing_arr[1].'-'.$ing_arr[0];
+	  	// //convert fecha_nac to mysql format
+	  	// if($request->fecha_nac != ''){
+		  // 	$fn_arr = explode("/", $request->fecha_nac);
+		  // 	if(is_array($fn_arr) && count($fn_arr) == 3){
+		  // 		$fields['fecha_nac'] = $fn_arr[2].'-'.$fn_arr[1].'-'.$fn_arr[0];
+		  // 	}
+		  // }
+		  //convert beneficiario_fecha_nac to mysql format
+		  if($request->beneficiario_fecha_nac != ''){
+		  	$bfn_arr = explode("/", $request->beneficiario_fecha_nac);
+		  	if(is_array($bfn_arr) && count($bfn_arr) == 3){
+		  		$fields['beneficiario_fecha_nac'] = $bfn_arr[2].'-'.$bfn_arr[1].'-'.$bfn_arr[0];
+		  	}
+		  }
+		  
+	  	
+	  	//determine if requested side is already filled
+	  	// if($count_uplines_left && $request->lado == 'left'){
+	  	// 	$messages = array(
+				//   'required' => 'El usuario de upline ya cuenta con su primario izquierdo.',
+				// );
+				// $validator = \Validator::make(['custom_error' => ''], ['custom_error' => 'required'],$messages);
+				// \Session::push('errors', $validator->messages() );
+				// return redirect('/oficina-virtual')->withInput($request->except('upline'));
+	  	// }
+	  	// if($count_uplines_right && $request->lado == 'right'){
+	  	// 	$messages = array(
+				//   'required' => 'El usuario de upline ya cuenta con su primario derecho.',
+				// );
+				// $validator = \Validator::make(['custom_error' => ''], ['custom_error' => 'required'],$messages);
+				// \Session::push('errors', $validator->messages() );
+				// return redirect('/oficina-virtual')->withInput($request->except('upline'));
+	  	// }
+
+	  	
+	    //update user password
+	    // $fields['password'] = bcrypt($pwd_str);
+
+	    //find the new user's asignado (5 levels up or empresa)
+	    //*THIS CAN CHANGE IF THE UPLINE WAS UPDATED (ALWAYS UPDATE)
+	    //$asignado = self::getAsignado($request->upline);
+
+	    //update username string (name changes the user)
+	    $username = substr($request->nombre,0,3).$update_usr->id;
+
+	    //save the user changes
+	    $update_usr->user 										= $username;
+			// $update_usr->upline 									= $request->upline;
+			// $update_usr->patrocinador 						= $request->patrocinador;
+			// $update_usr->side											= $request->lado;
+			// $update_usr->fecha_ingreso 						= $request->fecha_ingreso;
+			$update_usr->nombre 									= $request->nombre;
+			$update_usr->email 										= $request->email;
+			$update_usr->apellido_paterno 				= $request->apellido_paterno;
+			$update_usr->apellido_materno 				= $request->apellido_materno;
+			$update_usr->fecha_nac 								= $request->fecha_nac;
+			$update_usr->ife 											= $request->ife;
+			$update_usr->tel_cel 									= $request->tel_cel;
+			$update_usr->cp 											= $request->cp;
+			$update_usr->direccion 								= $request->direccion;
+			$update_usr->colonia 									= $request->colonia;
+			$update_usr->delegacion 							= $request->delegacion;
+			$update_usr->estado 									= $request->estado;
+			$update_usr->beneficiario 						= $request->beneficiario;
+			$update_usr->parentesco 							= $request->parentesco;
+			$update_usr->beneficiario_fecha_nac 	= $request->beneficiario_fecha_nac;		
+			//$update_usr->asignado 								= $asignado;		
+	    $update_usr->save();
+
+	    //generate patrocinio comision
+	    // $comissiones = self::genComPatr($newUser);
+
+	    \Session::push('alert-success', 'Datos de Usuario '.$update_usr->user.' actualizado exitosamente.');
+	    //return redirect('/office/api/generateMultsList');//recalculate the multiples and overwrite the json file
+	  }
+		return redirect('/oficina-virtual');
+	}
+
+
+
   private function genComPatr($newUser){
   	//patrocinio (every patrocinador gets this comission)
   	// this comission is assigned to the patrocinador
@@ -548,9 +708,6 @@ class BackController extends Controller
       'amount' 			=> 250.00,
   	]);
   }
-
-
-
 
   //======== API Functions ============================
 	public function getUser($id){
