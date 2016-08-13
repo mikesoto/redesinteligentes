@@ -43,7 +43,7 @@ $(document).ready(function() {
 		//set the first button as active
 		$("#cpanel-dashboard").focus();
 		//array of available panels
-		var office_panels = ['dashboard','red','comissiones','downloads'];
+		var office_panels = ['dashboard','red','comissiones','downloads','balance'];
 		//==================================================================================
 		//======================== set on click for cpanel shortcuts =======================
 		//==================================================================================
