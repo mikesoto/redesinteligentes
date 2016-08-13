@@ -110,16 +110,22 @@
           <h3 class="panel-title">Panel de Control</h3>
         </div>
         <div class="panel-body text-center">
-          <button class="btn btn-primary cpanel-link" id="cpanel-dashboard" data-panelName="dashboard">Dashboard</button>
-          <button class="btn btn-primary cpanel-link" id="cpanel-red" data-panelName="red">Red</button>
-          <button class="btn btn-primary cpanel-link" id="cpanel-comissiones" data-panelName="comissiones">Comisiones</button>
+          <div class="row nav-row">
+            <button class="btn btn-primary cpanel-link" id="cpanel-dashboard" data-panelName="dashboard">Dashboard</button>
+            <button class="btn btn-primary cpanel-link" id="cpanel-red" data-panelName="red">Red</button>
+            <button class="btn btn-primary cpanel-link" id="cpanel-comissiones" data-panelName="comissiones">Comisiones</button>
+            <button class="btn btn-primary cpanel-link" id="cpanel-downloads" data-panelName="downloads">Descargas</button>
+            <button class="btn btn-primary cpanel-link" id="cpanel-balance" data-panelName="balance">Balance</button>
+          </div>
           @if ($session_usr->id == 1)
+          <div class="row nav-row">
             <button class="btn btn-warning" id="register-user-btn" data-toggle="modal" data-target="#register-user-modal">Registrar Socio</button>
             <button class="btn btn-warning" id="mults-map-btn" data-toggle="modal" data-target="#mults-map-modal">Mults</button>
             <button class="btn btn-warning" id="bonos-map-btn" data-toggle="modal" data-target="#bonos-map-modal">Bonos</button>
             <button class="btn btn-warning" id="datos-personales-btn" data-toggle="modal" data-target="#edit-user-modal">Datos Personales</button>
+            <a class="btn btn-warning" href="/comisiones/all" target="_blank">Comisiones Todos</a>
+          </div>
           @endif 
-          <button class="btn btn-primary cpanel-link" id="cpanel-downloads" data-panelName="downloads">Descargas</button>
         </div>
       </div>
     </div>   
@@ -130,6 +136,8 @@
   
       @include('back.oficina_panels.commissions')
       
+      @include('back.oficina_panels.balance')
+
       @include('back.oficina_panels.downloads')
       <!-- DASHBOARD MUST BE LOADED LAST -->
       @include('back.oficina_panels.dashboard')
