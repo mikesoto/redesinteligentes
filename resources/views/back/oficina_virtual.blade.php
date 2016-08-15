@@ -112,10 +112,10 @@
         <div class="panel-body text-center">
           <div class="row nav-row">
             <button class="btn btn-primary cpanel-link" id="cpanel-dashboard" data-panelName="dashboard">Dashboard</button>
-            <button class="btn btn-primary cpanel-link" id="cpanel-red" data-panelName="red">Red</button>
-            <button class="btn btn-primary cpanel-link" id="cpanel-comissiones" data-panelName="comissiones">Comisiones</button>
+            <button class="btn btn-primary cpanel-link" id="cpanel-red" data-panelName="red">Mi Red</button>
             <button class="btn btn-primary cpanel-link" id="cpanel-downloads" data-panelName="downloads">Descargas</button>
             <button class="btn btn-primary cpanel-link" id="cpanel-balance" data-panelName="balance">Balance</button>
+            <button class="btn btn-primary cpanel-link" id="cpanel-comissiones" data-panelName="comissiones">Mis Comisiones</button>
           </div>
           @if ($session_usr->id == 1)
           <div class="row nav-row">

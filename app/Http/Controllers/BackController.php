@@ -923,7 +923,6 @@ class BackController extends Controller
 					  	//incriment the n_count so long as not disabled or belonging to anyone else
 							$n_count++;
 						}
-						
 					}	
 			  }
 			  //add the new object to the cur_mults array
@@ -937,7 +936,6 @@ class BackController extends Controller
 			//update the json file with the cur_mults array converted to json
 			file_put_contents(storage_path()."/app/multiples.json", json_encode($cur_mults));
 
-
 			//store any new multiples in comissiones table 
 			foreach($cur_mults as $mult){
 				$m_count = 0;
@@ -945,7 +943,6 @@ class BackController extends Controller
 					$m_count++;
 					if($m_count % 5 == 0 || $m_count % 6 == 0){
 						$com_amt = 0.00;
-						//TODO find the asignado for this user and add the comission there if not already created
 					}else{
 						$com_amt = 250.00;
 					}
@@ -1007,12 +1004,14 @@ class BackController extends Controller
 			\Session::push('alert-success', 'Múltiplos de red creados y guardados con éxito');
 			
 			return redirect('/office/api/generateBono20List');
-
 		}else{
 			echo 'not authorized... redirecting';
 			return redirect('/oficina-virtual');
 		}
 	}
+
+
+
 
 	public function generateBono20List(Request $request){
 		//only the admin user can update persistant bono20s data 
