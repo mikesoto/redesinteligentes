@@ -1020,7 +1020,7 @@ class BackController extends Controller
 		//get all comissiones of type multiplo
 		$query_mults = Comision::where('type','=','multiplo')->get();
 
-		//loop through each query_mult and check if it exits in any of the
+		//loop through each query_mult and check if it exists in any of the
 		//given mults->multiples arrays
 		foreach($query_mults as $q_mult){
 			$found = false;
@@ -1033,7 +1033,7 @@ class BackController extends Controller
 			//after searching through all calculated mults, if the mult 
 			//was not found it should be deleted
 			if(!$found){
-				\Session::push('alert-success', 'comisión de tipo multiplo con id: '.$q_mult->id.' es errónea y por lo tanto ha sido eliminado.');
+				\Session::push('alert-success', 'La comisión de tipo multiplo con id: '.$q_mult->id.' es errónea y por lo tanto ha sido eliminada.');
 				$q_mult->delete();
 			}
 		}
@@ -1293,11 +1293,44 @@ class BackController extends Controller
 			//add succes message
 			\Session::push('alert-success', 'Bonos 20 de toda la red creados y guardados con éxito');
 			
+			//clean erroneous bono20s from the comissions table
+			self::cleanBonosTable($cur_bono20s);
+
 			return redirect('/oficina-virtual');
 		
 		}else{
 			echo 'not authorized... redirecting';
 			return redirect('/oficina-virtual');
+		}
+	}
+
+	public function cleanBonosTable($bonos){
+		\Session::push('alert-success', 'Limpiando tabla de comisiones (Bonos)...');
+		//get all comissiones of type bono20
+		$query_bonos = Comision::where('type','=','bono20')->get();
+
+		//loop through each query_bonos and check if it exists in any of the
+		//given bonos arrays
+		foreach($query_bonos as $q_bono){
+			$found = false;
+			//loop through the given bonos arrays to check for existance of this bono
+			foreach($bonos as $bn){
+				if(!empty($bn->bonos)){
+					if( $q_bono->user_id == $bn->user_id ){
+						foreach($bn->bonos as $bnobj){
+							if($q_bono->new_user_id == $bnobj->new_user_id){
+								$found = true;
+							}
+						}		
+					}
+				}
+			}
+			//after searching through all calculated bonos, if the bono 
+			//was not found it should be deleted
+			if(!$found){
+				\Session::push('alert-success', 'La comisión de tipo bono20 con id: '.$q_bono->id.' es errónea y por lo tanto ha sido eliminada.');
+				$q_bono->delete();
+			}
 		}
 	}
 		
