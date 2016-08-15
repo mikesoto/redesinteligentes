@@ -1003,7 +1003,7 @@ class BackController extends Controller
 			//add succes message
 			\Session::push('alert-success', 'Múltiplos de red creados y guardados con éxito');
 			
-			//clear any erroneous mults comissions in the comissions table
+			//clear any erroneous mults in the comissions table
 			self::CleanMultsTable($cur_mults);
 
 
@@ -1016,6 +1016,7 @@ class BackController extends Controller
 
 
 	public function cleanMultsTable($mults){
+		\Session::push('alert-success', 'Limpiando tabla de comisiones (Múltiplos)...');
 		//get all comissiones of type multiplo
 		$query_mults = Comision::where('type','=','multiplo')->get();
 
