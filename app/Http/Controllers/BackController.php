@@ -1003,6 +1003,10 @@ class BackController extends Controller
 			//add succes message
 			\Session::push('alert-success', 'Múltiplos de red creados y guardados con éxito');
 			
+			//clear any erroneous mults comissions in the comissions table
+			self::CleanMultsTable($cur_mults);
+
+
 			return redirect('/office/api/generateBono20List');
 		}else{
 			echo 'not authorized... redirecting';
@@ -1010,6 +1014,29 @@ class BackController extends Controller
 		}
 	}
 
+
+	public function cleanMultsTable($mults){
+		//get all comissiones of type multiplo
+		$query_mults = Comision::where('type','=','multiplo')->get();
+
+		//loop through each query_mult and check if it exits in any of the
+		//given mults->multiples arrays
+		foreach($query_mults as $q_mult){
+			$found = false;
+			//loop through the given mults arrays to check for existance of this mult
+			foreach($mults as $mlt){
+				if( $q_mult->user_id == $mlt->user_id && in_array($q_mult->new_user_id, $mlt->multiples) ){
+					$found = true;
+				}
+			}
+			//after searching through all calculated mults, if the mult 
+			//was not found it should be deleted
+			if(!$found){
+				\Session::push('alert-success', 'comisión de tipo multiplo con id: '.$q_mult->id.' es errónea y por lo tanto ha sido eliminado.');
+				$q_mult->delete();
+			}
+		}
+	}
 
 
 
