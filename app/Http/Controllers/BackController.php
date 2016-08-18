@@ -1083,8 +1083,9 @@ class BackController extends Controller
 
 			//loop through ordered users list to find bono20s
 			foreach($users_arr as $root_user){
-				// echo 'cur_user: '.$root_user->id.'<br>';
-				
+				echo 'cur_user: '.$root_user->id.'<br>';
+				//reset array to hold all found bono20 comissions for this user
+	      $bono20Coms = [];
 				//reset the arrays to hold the lefts and rights members of each side
 			  $GLOBALS['lefties'] = array();
 			  $GLOBALS['righties'] = array();
@@ -1126,77 +1127,76 @@ class BackController extends Controller
 	        //get the date of the last registration
 	        $end_date_str = ($l_arr[$l_length -1]->fecha_ingreso >= $r_arr[$r_length -1]->fecha_ingreso)? $l_arr[$l_length -1]->fecha_ingreso : $r_arr[$r_length -1]->fecha_ingreso;
 	        $end_date = \DateTime::createFromFormat('Y-m-d H:i:s', $end_date_str.' 00:00:00');
-   				// echo 'start date: '.$start_date_str.'<br>';
-   				// echo 'end date: '.$end_date_str.'<br>';
-	        //reset array to hold all found bono20 comissions for this user
-	        $bono20Coms = [];
+   				echo 'start date: '.$start_date_str.'<br>';
+   				echo 'end date: '.$end_date_str.'<br>';
+	        
 	        $lc = 0;
 	        $rc = 0;
 	        $ltc = [];//holds left 10 counts users
 	        $rtc = [];//holds right 10 counts users
-	        // echo '<table border="1">
-	        //         <tr>
-	        //           <th>fecha</th>
-	        //           <th>ids izq</th>
-	        //           <th>ids drch</th>
-	        //           <th>cont izq</th>
-	        //           <th>cont drch</th>
-	        //           <th>cont *10 izq</th>
-	        //           <th>cont *10 drch</th>
-	        //           <th>es bono 20?</th>
-	        //         </tr>';
+	        echo '<table border="1">
+	                <tr>
+	                  <th>fecha</th>
+	                  <th>ids izq</th>
+	                  <th>ids drch</th>
+	                  <th>cont izq</th>
+	                  <th>cont drch</th>
+	                  <th>cont *10 izq</th>
+	                  <th>cont *10 drch</th>
+	                  <th>es bono 20?</th>
+	                </tr>';
 	        
 	        for($dt = $start_date; $dt <= $end_date; $dt ){       
-	          // echo '<tr>
-	          //         <td>
-	          //         	'.$dt->format('Y-m-d').'
-	          //         </td>
-	          //         <td>';
+	          echo '<tr>
+	                  <td>
+	                  	'.$dt->format('Y-m-d').'
+	                  </td>
+	                  <td>';
 			                foreach($l_arr as $soc){
 			                  if($soc->fecha_ingreso == $dt->format('Y-m-d')){
 			                    $lc++;
 			                    if($lc % 10 == 0){
 			                      array_push($ltc, $soc);
-			                      //echo '<strong>'.$soc->id.'</strong>,';
+			                      echo '<strong>'.$soc->id.'</strong>,';
 			                    }else{
-			                      //echo $soc->id.',';
+			                      echo $soc->id.',';
 			                    }
 			                  }
 			                } 
-	         //  echo   '</td>';
-	        	// echo 	 '<td>';
+	          echo   '</td>';
+	        	echo 	 '<td>';
 	                foreach($r_arr as $soc){
 	                  if($soc->fecha_ingreso == $dt->format('Y-m-d')){
 	                    $rc++;
 	                    if($rc % 10 == 0){
 	                      array_push($rtc, $soc);
-	                      //echo '<strong>'.$soc->id.'</strong>,';
+	                      echo '<strong>'.$soc->id.'</strong>,';
 	                    }else{
-	                      //echo $soc->id.',';
+	                      echo $soc->id.',';
 	                    }
 	                  }
 	                }  
-	         //  echo   '</td>';
-	        	// echo 	 '<td>
-	         //            '.$lc.'
-	         //          </td>
-	         //          <td>
-	         //            '.$rc.'
-	         //          </td>';
+	          echo   '</td>';
+	        	echo 	 '<td>
+	                    '.$lc.'
+	                  </td>
+	                  <td>
+	                    '.$rc.'
+	                  </td>';
 	                  $left_ten_count = count($ltc);
 	                  $right_ten_count = count($rtc);
-	          // echo '  <td>
-	          //           '.$left_ten_count.'
-	          //         </td>
-	          //         <td>
-	          //           '.$right_ten_count.'
-	          //         </td>';
-	          // echo '  <td>';
+	          echo '  <td>
+	                    '.$left_ten_count.'
+	                  </td>
+	                  <td>
+	                    '.$right_ten_count.'
+	                  </td>';
+	          echo '  <td>';
 	                    //check if both sides have at least one ten count
 	                    if($left_ten_count > 0 && $right_ten_count > 0){
 	                      //find out which side has less ten counts (or default to left count if they are equal)
 	                      $min_index = ($left_ten_count <= $right_ten_count)? $left_ten_count -1 : $right_ten_count-1;
-	                      // echo 'min_index: '.$min_index.'<br>';
+	                      //echo 'min_index: '.$min_index.'<br>';
 	                      //loop through the indexes of both arrays (until the shortest min_index)
 	                      for($x = 0; $x <= $min_index; $x++){
 	                        //check if both ten count arrays have a ten count in this index (only hold ten-count users) 
@@ -1233,18 +1233,18 @@ class BackController extends Controller
 	                              'upline' => $upline
 	                            );
 	                            array_push($bono20Coms, $new_bvcom);
-	                            //echo 'Si';
+	                            echo 'Si';
 	                          }
 	                        }
 	                      }
 	                    }
-	         //  echo 		'</td>';
-	        	// echo 	'</tr>';
+	         	echo 		'</td>';
+	        	echo 	'</tr>';
           	$dt = date_add($dt, date_interval_create_from_date_string('1 day'));
 	        }
-	        //echo "</table>";
+	        echo "</table>";
       	}else{
-      		//echo 'user does not have at least 1 registered user on each side<br>';
+      		echo 'user does not have at least 1 registered user on each side<br>';
       	}
       	//check if user has bono20coms
       	if(isset($bono20Coms)){
@@ -1253,9 +1253,10 @@ class BackController extends Controller
 	      		"user_id" => $root_user->id,
 	      		"bonos" => $bono20Coms
 	      	);
+	      	var_dump($bono20Coms);
       		array_push($cur_bono20s, $usr_report);
       	}
-      	//echo '=============================================================<br>';
+      	echo '=============================================================<br>';
 			}
 
 			//update the file with the cur_bono20s array converted to json
@@ -1296,7 +1297,7 @@ class BackController extends Controller
 			//clean erroneous bono20s from the comissions table
 			self::cleanBonosTable($cur_bono20s);
 
-			return redirect('/oficina-virtual');
+			//return redirect('/oficina-virtual');
 		
 		}else{
 			echo 'not authorized... redirecting';
