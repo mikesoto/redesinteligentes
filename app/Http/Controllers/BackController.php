@@ -1297,7 +1297,7 @@ class BackController extends Controller
 			//clean erroneous bono20s from the comissions table
 			self::cleanBonosTable($cur_bono20s);
 
-			//return redirect('/oficina-virtual');
+			return redirect('/oficina-virtual');
 		
 		}else{
 			echo 'not authorized... redirecting';
