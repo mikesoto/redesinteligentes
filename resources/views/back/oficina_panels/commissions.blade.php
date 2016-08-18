@@ -60,7 +60,8 @@
           $GLOBALS['total_ganancias'] += $week_ganancias_total;
         }
       ?>
-      @if(count($week_patrocinios) || count($week_multiples) || count($week_asigs) || count($week_bono20s) )
+      @if(count($week_patrocinios) || count($week_multiples) || count($week_asigs) || count($week_bono20s) ) 
+      
         <?php 
           $trans_months = array(
             'January' => 'enero',
