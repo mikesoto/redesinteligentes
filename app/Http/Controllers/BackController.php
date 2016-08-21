@@ -867,7 +867,6 @@ class BackController extends Controller
 	  	$users_arr = User::orderBy('id', 'asc')->get();
 		  //get count of original list
 		  $list_length = count($users_arr);
-			
 			//loop through ordered users list to find mults
 			foreach($users_arr as $root_user){
 		   	//get the tree from the root user's position
@@ -911,7 +910,7 @@ class BackController extends Controller
 				  		if( !in_array($tree_usr->id, $all_user_mults) ){
 					    	//found a multiple (not disabled or belonging to anyone else)
 					    	$mult_counter++;
-					    	//user is a multiple, adding to disabled uplines');
+					    	//user is a multiple, adding to disabled uplines
 					      array_push($multiples_arr, $tree_usr->id);
 					      array_push($disabled_uplines, $tree_usr->id);
 					      array_push($all_user_mults, $tree_usr->id);
@@ -954,7 +953,7 @@ class BackController extends Controller
 					if($comMult_res){
 						//comission multiplo already exists, skip this multiple
 					}else{
-						//comission multiplo does not exist, add to the database
+					//comission multiplo does not exist, add to the database
 						$m_user = User::find($m);
 						$m_user_asig = self::getAsignado($m_user->upline);
 						$new_mult_com = Comision::create([
@@ -970,6 +969,7 @@ class BackController extends Controller
 						]);
 					}
 					//if the commision amount is 0.00 than this was a 5th or 6th multiple
+					//create an asignado type comission for their asignado
 					if($com_amt == 0.00){
 						$mult_user = User::find($mult->user_id);
 						$mult_asig = self::getAsignado($mult_user->upline);
@@ -1334,6 +1334,8 @@ class BackController extends Controller
 			}
 		}
 	}
+
+ 
 		
 }
 

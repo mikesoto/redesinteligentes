@@ -11,7 +11,50 @@
         $filter_period = $_GET['p'];
       }
       $GLOBALS['total_ganancias'] = 0;
+      $GLOBALS['total_reserved'] = 0;
+      $GLOBALS['is_active'] = false;
+      $active_pats_left = 0;
+      $active_pats_right = 0;
+      $cut_date = date("Y-m-d", strtotime("-4 months"));
+      foreach($GLOBALS['patrs_side_left'] as $pl){
+        //check if user on left side is a ptrocinio of current user
+        if($pl->patrocinador == $cur_user->id){
+          //check if user was registered in the last 4 months
+          if(strtotime($pl->fecha_ingreso) >= strtotime($cut_date)){
+            //increment the left pats count
+            $active_pats_left++;
+          }
+        }
+      }
+      foreach($GLOBALS['patrs_side_right'] as $pl){
+        //check if user on right side is a ptrocinio of current user
+        if($pl->patrocinador == $cur_user->id){
+          //check if user was registered in the last 4 months
+          if(strtotime($pl->fecha_ingreso) >= strtotime($cut_date)){
+            //increment the right pats count
+            $active_pats_right++;
+          }
+        }
+      }
+
+    //show the alert for current active pats
+    if($active_pats_left > 0 && $active_pats_right > 0){
+      $GLOBALS['is_active'] = true;
+      echo '
+        <div class="alert alert-success" role="alert">
+          <p>Usted tiene por lo menos 1 patrocinio en cada lado en los últimos 4 meses.</p>
+          <p>Por lo tanto, todas sus comisiones estarán disponibles para retiro.</p>
+        </div>';
+    }else{
+      echo '
+        <div class="alert alert-danger" role="alert">
+          <p>Usted no tiene al menos 1 patrocinio en cada lado en los últimos 4 meses.</p>
+          <p>Por lo tanto, sus comisiones de Multiplos, Asignados, y Bono20 no estarán disponibles para retiro.</p>
+          <p>Una vez que cumpla con estos requisitos, usted será capaz de retirar todas sus comisiones.</p>
+        </div>';
+    }
     ?>
+
 
     @foreach($weeks_info as $week)
       <?php     
@@ -19,45 +62,59 @@
         $filtered = ($filter_period > 0 && $periodo != $filter_period)? 'hidden' : ''; 
 
         //gather all patrocinios for this week
-        $week_patrocinios = []; $week_patr_ganancias = 0;
+        $week_patrocinios = []; $week_patr_ganancias = 0; $week_patr_reserved = 0;
         foreach( $comsPatr as $patr ){
           if( $patr->created_at >= $week['week_domingo'] && $patr->created_at <= $week['week_sabado']){
             array_push($week_patrocinios, $patr);
             $week_patr_ganancias += $patr->amount;
+            if(!$GLOBALS['is_active']){
+              $week_patr_reserved += $patr->amount;
+            }
           }
         }
 
         //gather all patrocinios for this week
-        $week_multiples = []; $week_mult_ganancias = 0; $week_mult_null = 0;
+        $week_multiples = []; $week_mult_ganancias = 0; $week_mult_reserved = 0; $week_mult_null = 0;
         foreach( $comsMult as $mlt ){
           if( $mlt->created_at >= $week['week_domingo'] && $mlt->created_at <= $week['week_sabado']){
             array_push($week_multiples, $mlt);
             $week_mult_ganancias += $mlt->amount;
+            if(!$GLOBALS['is_active']){
+              $week_mult_reserved += $mlt->amount;
+            }
             if($mlt->amount == 0.00){
               $week_mult_null++;
             }
           }
         }
         //gather all the Asignados for this week
-        $week_asigs = []; $week_asig_ganancias = 0;
+        $week_asigs = []; $week_asig_ganancias = 0; $week_asig_reserved = 0;
         foreach( $comsAsig as $as ){
           if( $as->created_at >= $week['week_domingo'] && $as->created_at <= $week['week_sabado']){
             array_push($week_asigs, $as);
             $week_asig_ganancias += $as->amount;
+            if(!$GLOBALS['is_active']){
+              $week_asig_reserved += $as->amount;
+            }
           }
         }
         //gather all the bono20s for this week
-        $week_bono20s = [];  $week_bono_ganancias = 0;
+        $week_bono20s = [];  $week_bono_ganancias = 0; $week_bono_reserved = 0;
         foreach( $comsBono as $bn ){
           if( $bn->created_at >= $week['week_domingo'] && $bn->created_at <= $week['week_sabado']){
             array_push($week_bono20s, $bn);
             $week_bono_ganancias += $bn->amount;
+            if(!$GLOBALS['is_active']){
+              $week_bono_reserved += $as->amount;
+            }
           }
         }
         $week_ganancias_total = $week_patr_ganancias + $week_mult_ganancias + $week_asig_ganancias + $week_bono_ganancias;
+        $week_reserved_total = $week_patr_reserved + $week_mult_reserved + $week_asig_reserved + $week_bono_reserved;
         //only add to the grand total if the period is not filtered (hidden)
         if($filtered != 'hidden'){
           $GLOBALS['total_ganancias'] += $week_ganancias_total;
+          $GLOBALS['total_reserved'] += $week_reserved_total;
         }
       ?>
       @if(count($week_patrocinios) || count($week_multiples) || count($week_asigs) || count($week_bono20s) ) 
@@ -81,7 +138,7 @@
         <div class="col-sm-12 {{ $filtered }}">
           <button type="button" class="btn btn-lg btn-default com-periodo-label" data-toggle="collapse" data-target="#week-{{$week['week_num']}}">
             Periodo - {{ date_create($week['week_domingo'])->format("d") }} de {{ $trans_months[date_create($week['week_domingo'])->format("F")] }} al {{ date_create($week['week_sabado'])->format("d") }} de {{ $trans_months[date_create($week['week_sabado'])->format("F")] }} {{ date_create($week['week_sabado'])->format("Y") }}
-            <span class="badge pull-right">${{ number_format($week_ganancias_total, 2, '.',',') }}</span>
+            <span class="badge pull-right">${{ number_format($week_ganancias_total, 2, '.',',') }} @if($week_reserved_total) @endif</span>
           </button>
         </div>
         <br>

@@ -23,8 +23,6 @@
   //sort the users_arr contents using sort function
   usort($users_arr, "compare");   
   
-  
-
   //========================== TREE CONSTRUCTOR FUNCTIONS ==========================
   function makeRedLabel($arr,$lv_usr,$side){
     $assigned = false;
@@ -70,7 +68,9 @@
       }
   }
 
-
+  //global vars to hold left and right patrocinios ( for comissions reserved )
+  $GLOBALS['patrs_side_left'] = [];
+  $GLOBALS['patrs_side_right'] = [];
 
   //========================== SIDES CONSTRUCTOR FUNCTIONS ==========================
   function makeLadoRow($tree,$level,$to_count,$upline,$side){
@@ -99,8 +99,10 @@
           global $right_count;
           if($to_count == 'L'){
             $left_count++;
+            array_push($GLOBALS['patrs_side_left'],$socio);
           }else{
             $right_count++;
+            array_push($GLOBALS['patrs_side_right'],$socio);
           }
           //continue down to the next level
           makeLadoRow($tree,$level+1,$to_count,$socio->id,'left');
