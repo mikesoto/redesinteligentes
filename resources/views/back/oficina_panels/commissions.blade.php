@@ -105,7 +105,7 @@
             array_push($week_bono20s, $bn);
             $week_bono_ganancias += $bn->amount;
             if(!$GLOBALS['is_active']){
-              $week_bono_reserved += $as->amount;
+              $week_bono_reserved += $bn->amount;
             }
           }
         }
