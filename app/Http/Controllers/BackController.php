@@ -24,35 +24,18 @@ class BackController extends Controller
   }
 
 
-  private function getAsignado($upline){
+  private function getAsignado($target_id){
   	// default to empresa
-  	$asignado = User::find(1); 
-		//get first upline user
-		$user1 = User::find($upline);
-		if($user1){
-			//check if the user1's upline is not empresa
-			if($user1->upline > 0){
-				//continue to level 2
-				$user2 = User::find($user1->upline);
-				//check if the user2's upline is not empresa
-	  		if($user2->upline > 0){
-	  			//continue to level 3
-	  			$user3 = User::find($user2->upline);
-	  			//check if the user3's upline is not empresa
-		  		if($user3->upline > 0){
-		  			//continue to level 4
-		  			$user4 = User::find($user3->upline);
-		  			//check if the user4's upline is not empresa
-			  		if($user4->upline > 0){
-			  			//continue to level 5
-			  			$user5 = User::find($user4->upline);
-			  			//this is the user's asignado
-			  			$asignado = $user5;
-			  		}
-		  		}
-	  		}	
-			}
+  	$asig_id = 1;
+		//find the user_id for the $target's comission of type multiple
+		$comMult = Comision::where('type','=','multiplo')
+							->where('new_user_id',$target_id)
+							->first();
+		if($comMult){
+			$asig_id = $comMult->user_id;
 		}
+		//get the asignado user object from the table
+		$asignado = User::find($asig_id);
   	return $asignado;
   }
 
@@ -273,7 +256,7 @@ class BackController extends Controller
   		$cur_user = Auth::user();
   	}
   	//get the asignado for the current user
-  	$asignado = self::getAsignado($cur_user->upline);
+  	$asignado = self::getAsignado($cur_user->id);
   
   	//create tree by levels (each level is next index in array)
   	$tree = [];
@@ -594,9 +577,6 @@ class BackController extends Controller
     //create user password
     $pwd_str = 'redes'.rand(1000,9999);
     $fields['password'] = bcrypt($pwd_str);
-
-    //find the new user's asignado (5 levels up or empresa)
-    $fields['asignado'] = self::getAsignado($fields['upline']);
 
     $newUser = User::create($fields);
     //create username string
@@ -955,7 +935,7 @@ class BackController extends Controller
 					}else{
 					//comission multiplo does not exist, add to the database
 						$m_user = User::find($m);
-						$m_user_asig = self::getAsignado($m_user->upline);
+						$m_user_asig = self::getAsignado($m_user->id);
 						$new_mult_com = Comision::create([
 							'user_id' => $mult->user_id,
 							'new_user_id' => $m,
@@ -972,7 +952,7 @@ class BackController extends Controller
 					//create an asignado type comission for their asignado
 					if($com_amt == 0.00){
 						$mult_user = User::find($mult->user_id);
-						$mult_asig = self::getAsignado($mult_user->upline);
+						$mult_asig = self::getAsignado($mult_user->id);
 						//check if the comission already exists
 						$comMultAsig_res = Comision::where('type','=','asignado')
 																 ->where('user_id','=',$mult_asig->id)
@@ -982,7 +962,7 @@ class BackController extends Controller
 							//comission asignado already exists, skip this multiple
 						}else{
 							$m_user = User::find($m);
-							$m_user_asig = self::getAsignado($m_user->upline);
+							$m_user_asig = self::getAsignado($m_user->id);
 							//create a comission of type asignado for the $asig
 							$new_mult_com = Comision::create([
 								'user_id' => $mult_asig->id,
@@ -1038,8 +1018,6 @@ class BackController extends Controller
 			}
 		}
 	}
-
-
 
 	public function generateBono20List(Request $request){
 		//only the admin user can update persistant bono20s data 
